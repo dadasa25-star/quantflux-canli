@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QUANTFLUX 3D | CANLI BİLGİ YARIŞMASI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#03030c;overflow:hidden;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;color:#fff}
+body{display:flex;justify-content:center}
+#app{position:relative;height:100vh;width:min(100vw,56.25vh);container-type:inline-size;display:flex;flex-direction:column;gap:2cqw;padding:2.5cqw 4cqw 3cqw;overflow:hidden;
+background:radial-gradient(ellipse at 50% 18%,#33158a 0,#0c1038 46%,#04061a 100%)}
+#app::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
+background:linear-gradient(rgba(140,90,255,.25) 1px,transparent 1px) 0 0/8cqw 8cqw,linear-gradient(90deg,rgba(25,240,255,.18) 1px,transparent 1px) 0 0/8cqw 8cqw;
+-webkit-mask:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
+#app>*{position:relative}
+h1{text-align:center;line-height:1.1;font-weight:900;letter-spacing:.3cqw}
+h1 b{display:block;font-size:9cqw;background:linear-gradient(90deg,#ffd76a,#fff3c4 35%,#19f0ff 70%,#ffd76a);-webkit-background-clip:text;background-clip:text;color:transparent;
+filter:drop-shadow(0 0 2cqw rgba(25,240,255,.55));animation:shine 4s linear infinite;background-size:200% 100%}
+h1 span{font-size:3.7cqw;color:#c9b6ff;text-shadow:0 0 2cqw #8a4dff}
+@keyframes shine{to{background-position:200% 0}}
+#stage{flex:1 1 0;min-height:0;display:flex;flex-direction:column;align-items:center}
+#rob{--eye:#19f0ff;flex:1;min-height:0;width:100%}
+#rob svg{height:100%;width:100%;overflow:visible}
+#robw{animation:float 3.2s ease-in-out infinite;transform-origin:100px 120px}
+@keyframes float{50%{transform:translateY(-6px)}}
+.eye{fill:var(--eye);transition:fill .3s;filter:drop-shadow(0 0 5px var(--eye))}
+.glow{fill:var(--eye);transition:fill .3s}
+.m rect{fill:var(--eye);transition:fill .3s;transform-box:fill-box;transform-origin:center bottom;transform:scaleY(.25)}
+#rob.talk .m rect{animation:wave .35s ease-in-out infinite alternate}
+#rob.talk .m rect:nth-child(2){animation-delay:.08s}#rob.talk .m rect:nth-child(3){animation-delay:.16s}
+#rob.talk .m rect:nth-child(4){animation-delay:.04s}#rob.talk .m rect:nth-child(5){animation-delay:.12s}
+@keyframes wave{to{transform:scaleY(2.6)}}
+.arm{transform-box:fill-box;transform-origin:50% 8%;transition:transform .3s}
+#rob.happy{--eye:#2dff7a}#rob.sad{--eye:#ff2f45}
+#rob.happy #robw{animation:jump .45s ease-in-out 8}
+#rob.happy .armL{transform:rotate(150deg)}#rob.happy .armR{transform:rotate(-150deg)}
+#rob.sad #robw{animation:none;transform:translateY(5px) rotate(-3deg)}
+#rob.sad .head{transform:rotate(8deg) translateY(4px);transform-origin:100px 130px}
+#rob.sad .eye{transform-box:fill-box;transform-origin:center;transform:scaleY(.55)}
+@keyframes jump{50%{transform:translateY(-14px)}}
+#say{min-height:6.5cqw;font-size:3.8cqw;color:#bff9ff;text-align:center;text-shadow:0 0 2cqw #19f0ff;margin-top:-1cqw}
+#timer{position:absolute;top:0;right:0;width:20cqw;height:20cqw}
+#timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+#timer circle{fill:rgba(5,8,30,.75);stroke-width:7}
+#ring{fill:none!important;stroke:#19f0ff;stroke-linecap:round;stroke-dasharray:163.4;transition:stroke-dashoffset 1s linear,stroke .3s;filter:drop-shadow(0 0 2px currentColor)}
+#tnum{position:absolute;inset:0;display:grid;place-items:center;font-size:8.5cqw;font-weight:900;text-shadow:0 0 2cqw #19f0ff}
+#card{border-radius:4cqw;padding:3.2cqw 4cqw;text-align:center;background:linear-gradient(160deg,rgba(60,30,140,.75),rgba(10,16,60,.85));
+border:.5cqw solid #8a4dff;box-shadow:0 0 4cqw rgba(138,77,255,.6),inset 0 0 4cqw rgba(25,240,255,.12)}
+#qno{font-size:3.2cqw;color:#ffd76a;margin-bottom:1cqw;letter-spacing:.4cqw}
+#qtxt{font-size:6cqw;font-weight:800;line-height:1.22;text-shadow:0 .3cqw 0 #1a0a50}
+#boxes{display:flex;justify-content:center;gap:1.4cqw;flex-wrap:wrap;padding:1cqw 0}
+.box{--w:min(12.5cqw,calc(86cqw/var(--n) - 1.4cqw));width:var(--w);height:calc(var(--w)*1.18);display:grid;place-items:center;font-size:calc(var(--w)*.62);font-weight:900;border-radius:22%;
+background:linear-gradient(160deg,#3b2a99,#1b1260 60%,#0e0a3d);border:.4cqw solid #19f0ff;box-shadow:0 1.1cqw 0 #090530,0 0 2.5cqw rgba(25,240,255,.55),inset 0 .5cqw 1cqw rgba(255,255,255,.25);color:transparent;transform:perspective(300px) rotateX(10deg);transition:.35s}
+.box.on{color:#fff;text-shadow:0 0 2cqw #19f0ff}
+.box.hint{color:#9ff7ff;animation:pop .5s}
+.box.gold{color:#2b1800;background:linear-gradient(160deg,#fff1a8,#ffc53a 55%,#d58a00);border-color:#fff3b0;box-shadow:0 1.1cqw 0 #8a5600,0 0 4cqw rgba(255,200,60,.9);text-shadow:none;animation:pop .6s}
+.box.red{color:#ffdede;border-color:#ff2f45;box-shadow:0 1.1cqw 0 #3d0610,0 0 3cqw rgba(255,47,69,.7)}
+@keyframes pop{40%{transform:perspective(300px) rotateX(10deg) scale(1.25)}}
+#board{border-radius:3.5cqw;padding:2.2cqw 3.5cqw;background:rgba(8,10,40,.78);border:.4cqw solid rgba(25,240,255,.55);box-shadow:0 0 3cqw rgba(25,240,255,.25)}
+#board h2{font-size:3.9cqw;text-align:center;color:#ffd76a;text-shadow:0 0 2cqw rgba(255,200,60,.7);margin-bottom:1.2cqw}
+.row{display:flex;align-items:center;gap:2cqw;font-size:4cqw;padding:.7cqw 1.5cqw;border-radius:2cqw;margin-top:.5cqw;background:rgba(138,77,255,.14)}
+.row i{font-style:normal;width:6cqw;text-align:center}.row s{flex:1;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row em{font-style:normal;font-weight:900;color:#19f0ff}.row.up{animation:rowup 1.2s}
+.row.empty{opacity:.35}
+@keyframes rowup{0%,60%{background:rgba(255,200,60,.55)}}
+#win{position:absolute!important;left:6cqw;right:6cqw;top:30%;padding:5cqw 4cqw;text-align:center;border-radius:5cqw;font-weight:900;z-index:5;
+background:linear-gradient(160deg,#fff1a8,#ffc53a 60%,#e39100);color:#2b1800;box-shadow:0 0 8cqw rgba(255,200,60,.95);transform:scale(0) rotate(-6deg);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+#win.show{transform:scale(1) rotate(0)}
+#win small{display:block;font-size:4.6cqw}#win big{display:block;font-size:8.2cqw;margin:1.5cqw 0;line-height:1.1}
+#win div{font-size:4.2cqw}
+#fx{position:absolute!important;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
+#start{position:absolute!important;inset:0;z-index:20;display:grid;place-items:center;background:rgba(3,3,20,.9);text-align:center}
+#start button{font:900 6cqw inherit;font-family:inherit;padding:4cqw 8cqw;border-radius:6cqw;border:.5cqw solid #19f0ff;color:#fff;cursor:pointer;
+background:linear-gradient(160deg,#6a2cf5,#2b1180);box-shadow:0 0 5cqw #8a4dff,0 1.2cqw 0 #12084a}
+#start p{margin-top:4cqw;font-size:3.5cqw;color:#a9b4ff}
+#chip{position:absolute!important;left:1.5cqw;bottom:1.5cqw;z-index:9;display:flex;flex-direction:column;gap:1cqw;font-size:2.8cqw;align-items:flex-start}
+#chip .bar{display:flex;gap:1cqw;align-items:center}
+#chip button,#chip input{font:inherit;color:#fff;background:rgba(10,12,50,.92);border:1px solid #8a4dff;border-radius:1.5cqw;padding:.9cqw 1.6cqw}
+#chip button{cursor:pointer}#chip input{width:20cqw}#chip input.c{width:34cqw}
+#tf{display:none;gap:1cqw;padding:1.2cqw;border-radius:2cqw;background:rgba(5,6,30,.92);border:1px solid #19f0ff;align-items:center}
+#chip.open #tf{display:flex}
+#dot{width:2.2cqw;height:2.2cqw;border-radius:50%;background:#f33}#dot.ok{background:#2dff7a;box-shadow:0 0 6px #2dff7a}
+</style>
+</head>
+<body>
+<div id="app">
+  <h1><b>QUANTFLUX 3D</b><span>| CANLI BİLGİ YARIŞMASI</span></h1>
+
+  <div id="stage">
+    <div id="rob">
+      <svg viewBox="0 0 200 215" aria-label="Yapay zeka robotu">
+        <defs>
+          <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6e5bd8"/><stop offset="1" stop-color="#241a6e"/></linearGradient>
+          <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b39b8"/><stop offset="1" stop-color="#1a1252"/></linearGradient>
+        </defs>
+        <ellipse cx="100" cy="208" rx="55" ry="6" fill="#19f0ff" opacity=".22"/>
+        <g id="robw">
+          <rect class="arm armL" x="34" y="144" width="18" height="52" rx="9" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
+          <rect class="arm armR" x="148" y="144" width="18" height="52" rx="9" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
+          <rect x="55" y="138" width="90" height="62" rx="22" fill="url(#bg)" stroke="#8a4dff" stroke-width="2.5"/>
+          <circle class="glow" cx="100" cy="168" r="10" opacity=".9"/>
+          <rect x="72" y="186" width="56" height="4" rx="2" fill="#8a4dff" opacity=".6"/>
+          <rect x="88" y="126" width="24" height="14" fill="#241a6e"/>
+          <g class="head">
+            <line x1="100" y1="16" x2="100" y2="40" stroke="#8a4dff" stroke-width="4"/>
+            <circle class="glow" cx="100" cy="13" r="7"/>
+            <rect x="26" y="68" width="14" height="32" rx="6" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
+            <rect x="160" y="68" width="14" height="32" rx="6" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
+            <rect x="38" y="38" width="124" height="92" rx="30" fill="url(#hg)" stroke="#a98bff" stroke-width="2.5"/>
+            <rect x="50" y="54" width="100" height="48" rx="20" fill="#04061c" stroke="#19f0ff" stroke-opacity=".35"/>
+            <ellipse class="eye" cx="78" cy="78" rx="12" ry="13"/>
+            <ellipse class="eye" cx="122" cy="78" rx="12" ry="13"/>
+            <g class="m" transform="translate(0,0)">
+              <rect x="76" y="110" width="6" height="8" rx="2"/><rect x="86" y="110" width="6" height="8" rx="2"/>
+              <rect x="97" y="110" width="6" height="8" rx="2"/><rect x="108" y="110" width="6" height="8" rx="2"/>
+              <rect x="118" y="110" width="6" height="8" rx="2"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div id="say">&nbsp;</div>
+  </div>
+
+  <div id="timerwrap" style="position:absolute;top:19cqw;right:4cqw;width:20cqw;height:20cqw;z-index:3">
+    <div id="timer" style="position:relative;top:0;right:0">
+      <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" stroke="rgba(138,77,255,.35)"/><circle id="ring" cx="30" cy="30" r="26"/></svg>
+      <div id="tnum">45</div>
+    </div>
+  </div>
+
+  <div id="card"><div id="qno">SORU</div><div id="qtxt">Hazırlanıyor...</div></div>
+  <div id="boxes"></div>
+
+  <div id="board"><h2>GÜNÜN EN ZEKİLERİ (TOP 5)</h2><div id="rows"></div></div>
+
+  <div id="win"><small>🏆 TEBRİKLER <span id="wu"></span>!</small><big id="wa"></big><div>DOĞRU CEVAP · +10 PUAN</div></div>
+  <canvas id="fx"></canvas>
+
+  <div id="chip" class="open">
+    <div id="tf">
+      <input id="tu" placeholder="Kullanıcı adı" value="Sertan">
+      <input id="tc" class="c" placeholder="Yorum yaz + Enter">
+    </div>
+    <div class="bar"><button id="snd">🔊 Ses: Açık</button><span id="dot" title="TikFinity"></span><span id="ws">TikFinity: bağlı değil</span><span style="opacity:.6">[H]</span></div>
+  </div>
+
+  <div id="start"><div><button id="go">▶ YAYINI BAŞLAT</button><p>Tarayıcı sesi için bir kez tıklaman gerekir.</p></div></div>
+</div>
+
+<script>
+const Q=[
+["Türkiye'nin başkenti neresidir?","ANKARA"],
+["Dünyanın en büyük okyanusu hangisidir?","PASİFİK"],
+["Cumhuriyetimizin kurucusu kimdir?","ATATÜRK"],
+["İstanbul'u fetheden padişahın lakabı nedir?","FATİH"],
+["Güneş Sistemi'nin en büyük gezegeni hangisidir?","JÜPİTER"],
+["Dünya'nın tek doğal uydusu nedir?","AY"],
+["Bitcoin'in kurucusunun takma adı nedir?","SATOSHİ"],
+["Türkiye'nin para birimi nedir?","LİRA"],
+["Dünyanın en yüksek dağı hangisidir?","EVEREST"],
+["Mısır'daki ünlü üçgen antik yapılara ne denir?","PİRAMİT"],
+["Aya ilk ayak basan astronotun soyadı nedir?","ARMSTRONG"],
+["Afrika'dan akan dünyanın en ünlü nehri hangisidir?","NİL"],
+["Gökkuşağında kaç renk vardır?","YEDİ"],
+["Türkiye Cumhuriyeti hangi yıl ilan edildi?","1923"],
+["Eyfel Kulesi hangi ülkenin başkentindedir?","FRANSA"],
+["İtalya'nın başkenti neresidir?","ROMA"],
+["Japonya'nın başkenti neresidir?","TOKYO"],
+["İnsan vücudundaki en büyük organ hangisidir?","DERİ"],
+["Kanı vücuda pompalayan organımız hangisidir?","KALP"],
+["Elmas hangi elementin kristal hâlidir?","KARBON"],
+["Mal ve hizmet fiyatlarının genel olarak artmasına ne denir?","ENFLASYON"],
+["Borsada fiyatlar yükselirken hangi hayvan sembol olur?","BOĞA"],
+["Borsada fiyatlar düşerken hangi hayvan sembol olur?","AYI"],
+["Efes Antik Kenti hangi ilimizdedir?","İZMİR"],
+["Pamukkale travertenleri hangi ilimizdedir?","DENİZLİ"],
+["Peribacalarıyla ünlü Kapadokya hangi ilimizdedir?","NEVŞEHİR"],
+["Mona Lisa tablosunu yapan ünlü ressam kimdir?","LEONARDO"],
+["Türkiye'nin en yüksek dağı hangisidir?","AĞRI"],
+["Dünyanın en büyük kıtası hangisidir?","ASYA"],
+["Ekim'den sonra gelen ay hangisidir?","KASIM"],
+["Bilgisayarın beyni olarak bilinen parça nedir?","İŞLEMCİ"],
+["Mars'a hangi renkle anılan lakap verilir? Kızıl ...?","GEZEGEN"],
+["Kurban ve Ramazan dışında Türkiye'nin 29 Ekim'de kutladığı bayram nedir?","CUMHURİYET"],
+["Altın, gümüş ve bakır gibi değerli kıymetli maddelere ne ad verilir?","MADEN"]
+];
+const $=id=>document.getElementById(id),rob=$('rob');
+const N=s=>String(s).toLocaleLowerCase('tr').replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]/g,'');
+const TIME=45;
+let deck=[],qn=0,cur=null,rev=new Set(),left=TIME,state='idle',snd=true,scores={},lastWinner='',tmo=0;
+
+/* ---- Ses / konuşma ---- */
+function say(t,speak=true){$('say').textContent=t||'\u00a0';if(speak)talk(t)}
+function talk(t){
+  clearTimeout(tmo);
+  if(snd&&'speechSynthesis'in window){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';u.rate=1.02;
+    const v=speechSynthesis.getVoices().find(v=>(v.lang||'').toLowerCase().startsWith('tr'));if(v)u.voice=v;
+    u.onstart=()=>rob.classList.add('talk');u.onend=u.onerror=()=>rob.classList.remove('talk');
+    speechSynthesis.speak(u);
+  }else{rob.classList.add('talk');tmo=setTimeout(()=>rob.classList.remove('talk'),Math.min(4000,t.length*70))}
+}
+function mood(m){rob.classList.remove('happy','sad');if(m)rob.classList.add(m)}
+
+/* ---- Soru akışı ---- */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function nextQ(){
+  if(!deck.length)deck=shuffle(Q.map((_,i)=>i));
+  cur=Q[deck.pop()];qn++;rev=new Set();left=TIME;state='run';mood('');
+  $('qno').textContent='SORU '+qn+' · '+cur[1].length+' HARFLİ';$('qtxt').textContent=cur[0];
+  const b=$('boxes');b.innerHTML='';b.style.setProperty('--n',cur[1].length);
+  [...cur[1]].forEach(()=>{const d=document.createElement('div');d.className='box';d.style.setProperty('--n',cur[1].length);d.textContent='?';b.appendChild(d)});
+  [...b.children].forEach((d,i)=>d.dataset.i=i);
+  drawTimer();say(cur[0]);
+}
+function boxEl(i){return $('boxes').children[i]}
+function hint(){
+  const hid=[...cur[1]].map((_,i)=>i).filter(i=>!rev.has(i));
+  if(hid.length<2)return;
+  const i=hid[Math.random()*hid.length|0];rev.add(i);
+  const d=boxEl(i);d.textContent=cur[1][i];d.classList.add('on','hint');
+  say('İpucu! '+(i+1)+'. harf: '+cur[1][i]);
+}
+function drawTimer(){
+  $('tnum').textContent=Math.max(0,left);
+  const r=$('ring');r.style.strokeDashoffset=163.4*(1-Math.max(0,left)/TIME);
+  const c=left<=10?'#ff2f45':left<=25?'#ffd76a':'#19f0ff';r.style.stroke=c;$('tnum').style.color=left<=10?'#ff8a95':'#fff';
+}
+setInterval(()=>{
+  if(state!=='run')return;
+  left--;drawTimer();
+  if(left===25||left===10)hint();
+  if(left<=0)timeout();
+},1000);
+
+function timeout(){
+  state='wait';mood('sad');
+  [...cur[1]].forEach((ch,i)=>{const d=boxEl(i);d.textContent=ch;d.classList.add('on','red')});
+  say('Süre doldu! Doğru cevap '+cur[1].toLocaleLowerCase('tr')+' idi.');
+  setTimeout(nextQ,6000);
+}
+function win(user){
+  state='wait';mood('happy');
+  [...cur[1]].forEach((ch,i)=>{const d=boxEl(i);d.textContent=ch;d.classList.remove('hint','red');d.classList.add('on','gold');d.style.animationDelay=i*70+'ms'});
+  scores[user]=(scores[user]||0)+10;lastWinner=user;board();
+  $('wu').textContent=user.toLocaleUpperCase('tr');$('wa').textContent=cur[1];$('win').classList.add('show');
+  boom();
+  const ans=cur[1].toLocaleLowerCase('tr');
+  say('Tebrikler '+user+', doğru cevap '+ans+'!');
+  setTimeout(()=>$('win').classList.remove('show'),5200);
+  setTimeout(nextQ,6500);
+}
+function comment(user,text){
+  if(state!=='run'||!cur)return;
+  if(N(text)&&N(text)===N(cur[1]))win(String(user).trim()||'Misafir');
+}
+
+/* ---- Liderlik tablosu ---- */
+function board(){
+  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,5),med=['🥇','🥈','🥉','4','5'];
+  $('rows').innerHTML=[0,1,2,3,4].map(i=>top[i]
+    ?`<div class="row${top[i][0]===lastWinner?' up':''}"><i>${med[i]}</i><s>${esc(top[i][0])}</s><em>${top[i][1]} P</em></div>`
+    :`<div class="row empty"><i>${med[i]}</i><s>—</s><em>0 P</em></div>`).join('');
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---- Konfeti ---- */
+const cv=$('fx'),cx=cv.getContext('2d');let P=[],raf=0;
+function boom(){
+  cv.width=cv.clientWidth;cv.height=cv.clientHeight;
+  const cols=['#ffd76a','#19f0ff','#8a4dff','#2dff7a','#ff4fa3','#fff'];
+  for(let k=0;k<170;k++){const l=k%2;P.push({x:l?cv.width:0,y:cv.height*.55,vx:(l?-1:1)*(4+Math.random()*9),vy:-(8+Math.random()*13),s:6+Math.random()*8,r:Math.random()*6,vr:Math.random()*.4-.2,c:cols[k%6],life:140+Math.random()*60})}
+  if(!raf)loop();
+}
+function loop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  P=P.filter(p=>p.life-->0&&p.y<cv.height+30);
+  P.forEach(p=>{p.vy+=.32;p.vx*=.992;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});
+  raf=P.length?requestAnimationFrame(loop):0;
+}
+
+/* ---- TikFinity WebSocket ---- */
+function wsState(ok){$('dot').classList.toggle('ok',ok);$('ws').textContent='TikFinity: '+(ok?'bağlı':'bağlı değil')}
+function connect(){
+  let ws;try{ws=new WebSocket('ws://localhost:21213/')}catch(e){return setTimeout(connect,5000)}
+  ws.onopen=()=>wsState(true);
+  ws.onclose=()=>{wsState(false);setTimeout(connect,5000)};
+  ws.onerror=()=>{try{ws.close()}catch(e){}};
+  ws.onmessage=e=>{try{
+    const m=JSON.parse(e.data);
+    if(m.event==='chat'){const d=m.data||{};comment(d.nickname||d.uniqueId||'Misafir',d.comment||'')}
+  }catch(_){}};
+}
+
+/* ---- Test paneli ---- */
+function sendTest(){const u=$('tu').value.trim()||'Test',c=$('tc').value;$('tc').value='';comment(u,c)}
+$('tc').addEventListener('keydown',e=>{if(e.key==='Enter')sendTest()});
+$('snd').onclick=()=>{snd=!snd;$('snd').textContent=snd?'🔊 Ses: Açık':'🔇 Ses: Kapalı';if(!snd&&'speechSynthesis'in window)speechSynthesis.cancel()};
+addEventListener('keydown',e=>{if((e.key==='h'||e.key==='H')&&!/INPUT|TEXTAREA/.test(e.target.tagName))$('chip').classList.toggle('open')});
+if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=()=>{};
+
+/* ---- Başlat ---- */
+$('go').onclick=()=>{$('start').remove();board();connect();say('Merhaba! Ben Quantflux. Cevabı yorumlara yazın!');setTimeout(nextQ,3500)};
+board();drawTimer();
+</script>
+</body>
+</html>
