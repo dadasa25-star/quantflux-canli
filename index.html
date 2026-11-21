@@ -1,310 +1,644 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QUANTFLUX 3D | CANLI BİLGİ YARIŞMASI</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#03030c;overflow:hidden;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;color:#fff}
-body{display:flex;justify-content:center}
-#app{position:relative;height:100vh;width:min(100vw,56.25vh);container-type:inline-size;display:flex;flex-direction:column;gap:2cqw;padding:2.5cqw 4cqw 3cqw;overflow:hidden;
-background:radial-gradient(ellipse at 50% 18%,#33158a 0,#0c1038 46%,#04061a 100%)}
-#app::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
-background:linear-gradient(rgba(140,90,255,.25) 1px,transparent 1px) 0 0/8cqw 8cqw,linear-gradient(90deg,rgba(25,240,255,.18) 1px,transparent 1px) 0 0/8cqw 8cqw;
--webkit-mask:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
-#app>*{position:relative}
-h1{text-align:center;line-height:1.1;font-weight:900;letter-spacing:.3cqw}
-h1 b{display:block;font-size:9cqw;background:linear-gradient(90deg,#ffd76a,#fff3c4 35%,#19f0ff 70%,#ffd76a);-webkit-background-clip:text;background-clip:text;color:transparent;
-filter:drop-shadow(0 0 2cqw rgba(25,240,255,.55));animation:shine 4s linear infinite;background-size:200% 100%}
-h1 span{font-size:3.7cqw;color:#c9b6ff;text-shadow:0 0 2cqw #8a4dff}
-@keyframes shine{to{background-position:200% 0}}
-#stage{flex:1 1 0;min-height:0;display:flex;flex-direction:column;align-items:center}
-#rob{--eye:#19f0ff;flex:1;min-height:0;width:100%}
-#rob svg{height:100%;width:100%;overflow:visible}
-#robw{animation:float 3.2s ease-in-out infinite;transform-origin:100px 120px}
-@keyframes float{50%{transform:translateY(-6px)}}
-.eye{fill:var(--eye);transition:fill .3s;filter:drop-shadow(0 0 5px var(--eye))}
-.glow{fill:var(--eye);transition:fill .3s}
-.m rect{fill:var(--eye);transition:fill .3s;transform-box:fill-box;transform-origin:center bottom;transform:scaleY(.25)}
-#rob.talk .m rect{animation:wave .35s ease-in-out infinite alternate}
-#rob.talk .m rect:nth-child(2){animation-delay:.08s}#rob.talk .m rect:nth-child(3){animation-delay:.16s}
-#rob.talk .m rect:nth-child(4){animation-delay:.04s}#rob.talk .m rect:nth-child(5){animation-delay:.12s}
-@keyframes wave{to{transform:scaleY(2.6)}}
-.arm{transform-box:fill-box;transform-origin:50% 8%;transition:transform .3s}
-#rob.happy{--eye:#2dff7a}#rob.sad{--eye:#ff2f45}
-#rob.happy #robw{animation:jump .45s ease-in-out 8}
-#rob.happy .armL{transform:rotate(150deg)}#rob.happy .armR{transform:rotate(-150deg)}
-#rob.sad #robw{animation:none;transform:translateY(5px) rotate(-3deg)}
-#rob.sad .head{transform:rotate(8deg) translateY(4px);transform-origin:100px 130px}
-#rob.sad .eye{transform-box:fill-box;transform-origin:center;transform:scaleY(.55)}
-@keyframes jump{50%{transform:translateY(-14px)}}
-#say{min-height:6.5cqw;font-size:3.8cqw;color:#bff9ff;text-align:center;text-shadow:0 0 2cqw #19f0ff;margin-top:-1cqw}
-#timer{position:absolute;top:0;right:0;width:20cqw;height:20cqw}
-#timer svg{width:100%;height:100%;transform:rotate(-90deg)}
-#timer circle{fill:rgba(5,8,30,.75);stroke-width:7}
-#ring{fill:none!important;stroke:#19f0ff;stroke-linecap:round;stroke-dasharray:163.4;transition:stroke-dashoffset 1s linear,stroke .3s;filter:drop-shadow(0 0 2px currentColor)}
-#tnum{position:absolute;inset:0;display:grid;place-items:center;font-size:8.5cqw;font-weight:900;text-shadow:0 0 2cqw #19f0ff}
-#card{border-radius:4cqw;padding:3.2cqw 4cqw;text-align:center;background:linear-gradient(160deg,rgba(60,30,140,.75),rgba(10,16,60,.85));
-border:.5cqw solid #8a4dff;box-shadow:0 0 4cqw rgba(138,77,255,.6),inset 0 0 4cqw rgba(25,240,255,.12)}
-#qno{font-size:3.2cqw;color:#ffd76a;margin-bottom:1cqw;letter-spacing:.4cqw}
-#qtxt{font-size:6cqw;font-weight:800;line-height:1.22;text-shadow:0 .3cqw 0 #1a0a50}
-#boxes{display:flex;justify-content:center;gap:1.4cqw;flex-wrap:wrap;padding:1cqw 0}
-.box{--w:min(12.5cqw,calc(86cqw/var(--n) - 1.4cqw));width:var(--w);height:calc(var(--w)*1.18);display:grid;place-items:center;font-size:calc(var(--w)*.62);font-weight:900;border-radius:22%;
-background:linear-gradient(160deg,#3b2a99,#1b1260 60%,#0e0a3d);border:.4cqw solid #19f0ff;box-shadow:0 1.1cqw 0 #090530,0 0 2.5cqw rgba(25,240,255,.55),inset 0 .5cqw 1cqw rgba(255,255,255,.25);color:transparent;transform:perspective(300px) rotateX(10deg);transition:.35s}
-.box.on{color:#fff;text-shadow:0 0 2cqw #19f0ff}
-.box.hint{color:#9ff7ff;animation:pop .5s}
-.box.gold{color:#2b1800;background:linear-gradient(160deg,#fff1a8,#ffc53a 55%,#d58a00);border-color:#fff3b0;box-shadow:0 1.1cqw 0 #8a5600,0 0 4cqw rgba(255,200,60,.9);text-shadow:none;animation:pop .6s}
-.box.red{color:#ffdede;border-color:#ff2f45;box-shadow:0 1.1cqw 0 #3d0610,0 0 3cqw rgba(255,47,69,.7)}
-@keyframes pop{40%{transform:perspective(300px) rotateX(10deg) scale(1.25)}}
-#board{border-radius:3.5cqw;padding:2.2cqw 3.5cqw;background:rgba(8,10,40,.78);border:.4cqw solid rgba(25,240,255,.55);box-shadow:0 0 3cqw rgba(25,240,255,.25)}
-#board h2{font-size:3.9cqw;text-align:center;color:#ffd76a;text-shadow:0 0 2cqw rgba(255,200,60,.7);margin-bottom:1.2cqw}
-.row{display:flex;align-items:center;gap:2cqw;font-size:4cqw;padding:.7cqw 1.5cqw;border-radius:2cqw;margin-top:.5cqw;background:rgba(138,77,255,.14)}
-.row i{font-style:normal;width:6cqw;text-align:center}.row s{flex:1;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row em{font-style:normal;font-weight:900;color:#19f0ff}.row.up{animation:rowup 1.2s}
-.row.empty{opacity:.35}
-@keyframes rowup{0%,60%{background:rgba(255,200,60,.55)}}
-#win{position:absolute!important;left:6cqw;right:6cqw;top:30%;padding:5cqw 4cqw;text-align:center;border-radius:5cqw;font-weight:900;z-index:5;
-background:linear-gradient(160deg,#fff1a8,#ffc53a 60%,#e39100);color:#2b1800;box-shadow:0 0 8cqw rgba(255,200,60,.95);transform:scale(0) rotate(-6deg);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
-#win.show{transform:scale(1) rotate(0)}
-#win small{display:block;font-size:4.6cqw}#win big{display:block;font-size:8.2cqw;margin:1.5cqw 0;line-height:1.1}
-#win div{font-size:4.2cqw}
-#fx{position:absolute!important;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
-#start{position:absolute!important;inset:0;z-index:20;display:grid;place-items:center;background:rgba(3,3,20,.9);text-align:center}
-#start button{font:900 6cqw inherit;font-family:inherit;padding:4cqw 8cqw;border-radius:6cqw;border:.5cqw solid #19f0ff;color:#fff;cursor:pointer;
-background:linear-gradient(160deg,#6a2cf5,#2b1180);box-shadow:0 0 5cqw #8a4dff,0 1.2cqw 0 #12084a}
-#start p{margin-top:4cqw;font-size:3.5cqw;color:#a9b4ff}
-#chip{position:absolute!important;left:1.5cqw;bottom:1.5cqw;z-index:9;display:flex;flex-direction:column;gap:1cqw;font-size:2.8cqw;align-items:flex-start}
-#chip .bar{display:flex;gap:1cqw;align-items:center}
-#chip button,#chip input{font:inherit;color:#fff;background:rgba(10,12,50,.92);border:1px solid #8a4dff;border-radius:1.5cqw;padding:.9cqw 1.6cqw}
-#chip button{cursor:pointer}#chip input{width:20cqw}#chip input.c{width:34cqw}
-#tf{display:none;gap:1cqw;padding:1.2cqw;border-radius:2cqw;background:rgba(5,6,30,.92);border:1px solid #19f0ff;align-items:center}
-#chip.open #tf{display:flex}
-#dot{width:2.2cqw;height:2.2cqw;border-radius:50%;background:#f33}#dot.ok{background:#2dff7a;box-shadow:0 0 6px #2dff7a}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:#fff}
+#stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;transform-origin:center center;background:#060b19;overflow:hidden}
+canvas{position:absolute;left:0;top:0}
+#bg{width:1080px;height:1920px}
+#fx{width:1080px;height:1920px;pointer-events:none;z-index:50}
+.panel{position:absolute;background:rgba(8,14,38,.78);border:3px solid rgba(0,229,255,.55);border-radius:36px;box-shadow:0 0 40px rgba(124,58,237,.45),inset 0 0 30px rgba(0,229,255,.12)}
+#logo{left:40px;top:34px;width:1000px;height:110px;display:flex;align-items:center;justify-content:center;gap:22px;font-weight:900;letter-spacing:3px;font-size:44px;text-shadow:0 0 18px #00e5ff}
+#logo b{color:#ffc933;text-shadow:0 0 18px #ffb300}
+#logo i{font-style:normal;color:#b58cff}
+#ws{position:absolute;right:56px;top:152px;font-size:24px;font-weight:700;z-index:5;opacity:.9}
+#ws.on{color:#3dff8f}#ws.off{color:#ff4d6d}
+#hostwrap{left:290px;top:170px;width:500px;height:430px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.35),transparent 70%);border:none;box-shadow:none}
+#cat{left:290px;top:600px;width:500px;height:46px;text-align:center;font-size:26px;font-weight:800;letter-spacing:3px;color:#ffc933;line-height:46px;border-radius:23px;border-width:2px}
+#qbox{left:40px;top:760px;width:1000px;height:290px;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 48px 30px;font-size:58px;font-weight:800;line-height:1.25;text-shadow:0 0 14px rgba(0,229,255,.6)}
+#timer{position:absolute;left:440px;top:665px;width:200px;height:200px;z-index:6}
+#tnum{position:absolute;left:440px;top:665px;width:200px;height:200px;display:flex;align-items:center;justify-content:center;font-size:84px;font-weight:900;z-index:7;text-shadow:0 0 20px #00e5ff}
+#hint{left:40px;top:1075px;width:1000px;height:130px;display:flex;align-items:center;justify-content:center;font-size:74px;font-weight:900;letter-spacing:12px;color:#ffc933;text-shadow:0 0 16px #ffb300;padding:0 20px;text-align:center;word-break:break-word}
+#lower{position:absolute;left:-1100px;top:1235px;width:1000px;height:150px;z-index:30;transition:left .7s cubic-bezier(.2,.9,.3,1);background:linear-gradient(90deg,#7c3aed,#0891b2);border-radius:0 40px 40px 0;display:flex;align-items:center;padding:0 40px;font-size:38px;font-weight:800;line-height:1.25;box-shadow:0 0 50px rgba(0,229,255,.6)}
+#lower.show{left:0}
+#board{left:40px;top:1400px;width:1000px;height:480px;padding:22px 34px}
+#board h2{text-align:center;font-size:42px;letter-spacing:6px;color:#ffc933;text-shadow:0 0 16px #ffb300;margin-bottom:12px}
+.row{display:flex;align-items:center;height:70px;font-size:40px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.1)}
+.row:last-child{border:none}
+.row .rk{width:80px;color:#00e5ff;font-weight:900}
+.row .nm{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.row .pt{color:#3dff8f;font-weight:900}
+.row.first .nm,.row.first .rk{color:#ffc933}
+.empty{text-align:center;opacity:.6;font-size:34px;padding-top:80px}
+#winner{position:absolute;left:90px;top:560px;width:900px;height:760px;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(160deg,rgba(124,58,237,.96),rgba(8,145,178,.96));border:6px solid #ffc933;border-radius:60px;box-shadow:0 0 120px #ffc933}
+#winner.show{display:flex;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+#winner .t{font-size:46px;font-weight:800;letter-spacing:6px;color:#ffe9a8}
+#winner .n{font-size:100px;font-weight:900;margin:20px 30px;line-height:1.05;word-break:break-word;text-shadow:0 0 25px #fff}
+#winner .p{font-size:170px;font-weight:900;color:#ffc933;text-shadow:0 0 40px #ffb300}
+#winner .a{font-size:54px;font-weight:800;margin-top:10px}
+#timeup{position:absolute;left:90px;top:600px;width:900px;height:520px;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(80,5,25,.94);border:6px solid #ff4d6d;border-radius:60px;box-shadow:0 0 100px #ff4d6d}
+#timeup.show{display:flex;animation:pop .5s}
+#timeup .t{font-size:80px;font-weight:900;color:#ff9aae}
+#timeup .a{font-size:70px;font-weight:900;margin-top:24px;padding:0 30px;word-break:break-word}
+@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.blink{animation:bl 5s infinite;transform-origin:center;transform-box:fill-box}
+@keyframes bl{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.08)}}
+#host.happy{animation:hop .45s 4}
+#host.sad{transform:rotate(-4deg)}
+@keyframes hop{50%{transform:translateY(-26px)}}
+#host{transform-origin:250px 300px;transition:transform .4s}
+#test{position:fixed;left:12px;bottom:12px;z-index:999;background:rgba(0,0,0,.88);border:2px solid #00e5ff;border-radius:12px;padding:12px;width:290px;display:none;font-size:14px}
+#test.show{display:block}
+#test input{width:100%;margin:4px 0;padding:8px;border-radius:6px;border:1px solid #555;background:#111;color:#fff}
+#test button{padding:8px 10px;margin:4px 4px 0 0;border:0;border-radius:6px;background:#7c3aed;color:#fff;cursor:pointer;font-weight:700}
+#test small{display:block;opacity:.7;margin-top:6px}
 </style>
 </head>
 <body>
-<div id="app">
-  <h1><b>QUANTFLUX 3D</b><span>| CANLI BİLGİ YARIŞMASI</span></h1>
+<div id="stage">
+  <canvas id="bg" width="1080" height="1920"></canvas>
 
-  <div id="stage">
-    <div id="rob">
-      <svg viewBox="0 0 200 215" aria-label="Yapay zeka robotu">
-        <defs>
-          <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6e5bd8"/><stop offset="1" stop-color="#241a6e"/></linearGradient>
-          <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b39b8"/><stop offset="1" stop-color="#1a1252"/></linearGradient>
-        </defs>
-        <ellipse cx="100" cy="208" rx="55" ry="6" fill="#19f0ff" opacity=".22"/>
-        <g id="robw">
-          <rect class="arm armL" x="34" y="144" width="18" height="52" rx="9" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
-          <rect class="arm armR" x="148" y="144" width="18" height="52" rx="9" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
-          <rect x="55" y="138" width="90" height="62" rx="22" fill="url(#bg)" stroke="#8a4dff" stroke-width="2.5"/>
-          <circle class="glow" cx="100" cy="168" r="10" opacity=".9"/>
-          <rect x="72" y="186" width="56" height="4" rx="2" fill="#8a4dff" opacity=".6"/>
-          <rect x="88" y="126" width="24" height="14" fill="#241a6e"/>
-          <g class="head">
-            <line x1="100" y1="16" x2="100" y2="40" stroke="#8a4dff" stroke-width="4"/>
-            <circle class="glow" cx="100" cy="13" r="7"/>
-            <rect x="26" y="68" width="14" height="32" rx="6" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
-            <rect x="160" y="68" width="14" height="32" rx="6" fill="#3a2a9c" stroke="#8a4dff" stroke-width="2"/>
-            <rect x="38" y="38" width="124" height="92" rx="30" fill="url(#hg)" stroke="#a98bff" stroke-width="2.5"/>
-            <rect x="50" y="54" width="100" height="48" rx="20" fill="#04061c" stroke="#19f0ff" stroke-opacity=".35"/>
-            <ellipse class="eye" cx="78" cy="78" rx="12" ry="13"/>
-            <ellipse class="eye" cx="122" cy="78" rx="12" ry="13"/>
-            <g class="m" transform="translate(0,0)">
-              <rect x="76" y="110" width="6" height="8" rx="2"/><rect x="86" y="110" width="6" height="8" rx="2"/>
-              <rect x="97" y="110" width="6" height="8" rx="2"/><rect x="108" y="110" width="6" height="8" rx="2"/>
-              <rect x="118" y="110" width="6" height="8" rx="2"/>
-            </g>
-          </g>
-        </g>
-      </svg>
-    </div>
-    <div id="say">&nbsp;</div>
-  </div>
+  <div class="panel" id="logo">QUANTFLUX <b>3D</b> <i>|</i> CANLI BİLGİ YARIŞMASI</div>
+  <div id="ws" class="off">● TikFinity</div>
 
-  <div id="timerwrap" style="position:absolute;top:19cqw;right:4cqw;width:20cqw;height:20cqw;z-index:3">
-    <div id="timer" style="position:relative;top:0;right:0">
-      <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" stroke="rgba(138,77,255,.35)"/><circle id="ring" cx="30" cy="30" r="26"/></svg>
-      <div id="tnum">45</div>
-    </div>
-  </div>
+  <div class="panel" id="hostwrap"></div>
+  <svg id="hostsvg" viewBox="0 0 500 430" style="position:absolute;left:290px;top:170px;width:500px;height:430px;z-index:3">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3566"/><stop offset="1" stop-color="#121a3d"/></linearGradient>
+    </defs>
+    <g id="host">
+      <line x1="250" y1="40" x2="250" y2="80" stroke="#7c3aed" stroke-width="8" stroke-linecap="round"/>
+      <circle id="ant" cx="250" cy="34" r="14" fill="#00e5ff" filter="url(#glow)"/>
+      <rect x="130" y="75" width="240" height="200" rx="60" fill="url(#hg)" stroke="#00e5ff" stroke-width="5" id="head"/>
+      <rect x="150" y="100" width="200" height="110" rx="40" fill="#060b19" stroke="#7c3aed" stroke-width="3"/>
+      <g class="blink"><ellipse id="eL" cx="205" cy="155" rx="26" ry="30" fill="#00e5ff" filter="url(#glow)"/></g>
+      <g class="blink"><ellipse id="eR" cx="295" cy="155" rx="26" ry="30" fill="#00e5ff" filter="url(#glow)"/></g>
+      <g id="mouth" transform="translate(180,230)"></g>
+      <rect x="215" y="275" width="70" height="30" fill="#1a2350" stroke="#00e5ff" stroke-width="3"/>
+      <path d="M120 420 Q120 310 250 305 Q380 310 380 420 Z" fill="url(#hg)" stroke="#7c3aed" stroke-width="5"/>
+      <circle id="core" cx="250" cy="360" r="18" fill="#00e5ff" filter="url(#glow)"/>
+      <rect x="106" y="150" width="22" height="60" rx="10" fill="#7c3aed"/>
+      <rect x="372" y="150" width="22" height="60" rx="10" fill="#7c3aed"/>
+    </g>
+  </svg>
 
-  <div id="card"><div id="qno">SORU</div><div id="qtxt">Hazırlanıyor...</div></div>
-  <div id="boxes"></div>
+  <div class="panel" id="cat">—</div>
+  <svg id="timer" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="88" fill="rgba(6,11,25,.92)" stroke="rgba(255,255,255,.14)" stroke-width="12"/>
+    <circle id="ring" cx="100" cy="100" r="88" fill="none" stroke="#00e5ff" stroke-width="12" stroke-linecap="round" stroke-dasharray="553" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+  </svg>
+  <div id="tnum">45</div>
+  <div class="panel" id="qbox">Yarışma başlıyor...</div>
+  <div class="panel" id="hint"></div>
 
-  <div id="board"><h2>GÜNÜN EN ZEKİLERİ (TOP 5)</h2><div id="rows"></div></div>
+  <div id="lower"><span id="lowertxt"></span></div>
 
-  <div id="win"><small>🏆 TEBRİKLER <span id="wu"></span>!</small><big id="wa"></big><div>DOĞRU CEVAP · +10 PUAN</div></div>
-  <canvas id="fx"></canvas>
+  <div class="panel" id="board"><h2>GÜNÜN EN ZEKİLERİ</h2><div id="rows"></div></div>
 
-  <div id="chip" class="open">
-    <div id="tf">
-      <input id="tu" placeholder="Kullanıcı adı" value="Sertan">
-      <input id="tc" class="c" placeholder="Yorum yaz + Enter">
-    </div>
-    <div class="bar"><button id="snd">🔊 Ses: Açık</button><span id="dot" title="TikFinity"></span><span id="ws">TikFinity: bağlı değil</span><span style="opacity:.6">[H]</span></div>
-  </div>
+  <div id="winner"><div class="t">🎉 DOĞRU CEVAP 🎉</div><div class="n" id="wn"></div><div class="p">+10 PUAN</div><div class="a" id="wa"></div></div>
+  <div id="timeup"><div class="t">⏰ SÜRE DOLDU!</div><div class="a" id="ta"></div></div>
 
-  <div id="start"><div><button id="go">▶ YAYINI BAŞLAT</button><p>Tarayıcı sesi için bir kez tıklaman gerekir.</p></div></div>
+  <canvas id="fx" width="1080" height="1920"></canvas>
+</div>
+
+<div id="test" style="display:none">
+  <b>TEST PANELİ (H)</b>
+  <input id="tName" placeholder="İsim" value="TestKullanici">
+  <input id="tMsg" placeholder="Yorum / cevap">
+  <button id="tSend">Gönder</button><button id="tSnd">🔊 Ses: Açık</button><button id="tSkip">Soruyu Geç</button>
+  <small id="tInfo"></small>
 </div>
 
 <script>
-const Q=[
-["Türkiye'nin başkenti neresidir?","ANKARA"],
-["Dünyanın en büyük okyanusu hangisidir?","PASİFİK"],
-["Cumhuriyetimizin kurucusu kimdir?","ATATÜRK"],
-["İstanbul'u fetheden padişahın lakabı nedir?","FATİH"],
-["Güneş Sistemi'nin en büyük gezegeni hangisidir?","JÜPİTER"],
-["Dünya'nın tek doğal uydusu nedir?","AY"],
-["Bitcoin'in kurucusunun takma adı nedir?","SATOSHİ"],
-["Türkiye'nin para birimi nedir?","LİRA"],
-["Dünyanın en yüksek dağı hangisidir?","EVEREST"],
-["Mısır'daki ünlü üçgen antik yapılara ne denir?","PİRAMİT"],
-["Aya ilk ayak basan astronotun soyadı nedir?","ARMSTRONG"],
-["Afrika'dan akan dünyanın en ünlü nehri hangisidir?","NİL"],
-["Gökkuşağında kaç renk vardır?","YEDİ"],
-["Türkiye Cumhuriyeti hangi yıl ilan edildi?","1923"],
-["Eyfel Kulesi hangi ülkenin başkentindedir?","FRANSA"],
-["İtalya'nın başkenti neresidir?","ROMA"],
-["Japonya'nın başkenti neresidir?","TOKYO"],
-["İnsan vücudundaki en büyük organ hangisidir?","DERİ"],
-["Kanı vücuda pompalayan organımız hangisidir?","KALP"],
-["Elmas hangi elementin kristal hâlidir?","KARBON"],
-["Mal ve hizmet fiyatlarının genel olarak artmasına ne denir?","ENFLASYON"],
-["Borsada fiyatlar yükselirken hangi hayvan sembol olur?","BOĞA"],
-["Borsada fiyatlar düşerken hangi hayvan sembol olur?","AYI"],
-["Efes Antik Kenti hangi ilimizdedir?","İZMİR"],
-["Pamukkale travertenleri hangi ilimizdedir?","DENİZLİ"],
-["Peribacalarıyla ünlü Kapadokya hangi ilimizdedir?","NEVŞEHİR"],
-["Mona Lisa tablosunu yapan ünlü ressam kimdir?","LEONARDO"],
-["Türkiye'nin en yüksek dağı hangisidir?","AĞRI"],
-["Dünyanın en büyük kıtası hangisidir?","ASYA"],
-["Ekim'den sonra gelen ay hangisidir?","KASIM"],
-["Bilgisayarın beyni olarak bilinen parça nedir?","İŞLEMCİ"],
-["Mars'a hangi renkle anılan lakap verilir? Kızıl ...?","GEZEGEN"],
-["Kurban ve Ramazan dışında Türkiye'nin 29 Ekim'de kutladığı bayram nedir?","CUMHURİYET"],
-["Altın, gümüş ve bakır gibi değerli kıymetli maddelere ne ad verilir?","MADEN"]
+(function(){
+"use strict";
+
+/* ============ 210 SORU (7 kategori x 30) ============ */
+var CATS=["GENEL KÜLTÜR","COĞRAFYA","TARİH","BİLİM","SPOR","SİNEMA","TEKNOLOJİ"];
+var RAW=[
+// --- GENEL KÜLTÜR (30)
+"Gökkuşağında kaç renk vardır?|7/yedi",
+"Satrançta en güçlü taş hangisidir?|Vezir/Kraliçe",
+"Dünyanın en büyük okyanusu hangisidir?|Pasifik/Büyük Okyanus",
+"Türkiye'nin para birimi nedir?|Lira/Türk Lirası",
+"Hangi hayvana çölün gemisi denir?|Deve",
+"Karagöz'ün gölge oyunundaki ünlü arkadaşı kimdir?|Hacivat",
+"Piyanoda kaç tuş vardır?|88/seksen sekiz",
+"Elmasın yapıldığı element hangisidir?|Karbon",
+"Bir saatte kaç dakika vardır?|60/altmış",
+"Türk bayrağında ay ile birlikte hangi şekil vardır?|Yıldız",
+"Sarı ile mavi karışınca hangi renk oluşur?|Yeşil",
+"Bir buçuk yılda kaç ay vardır?|18/on sekiz",
+"Dünyanın en hızlı kara hayvanı hangisidir?|Çita",
+"Ahtapotun kaç kolu vardır?|8/sekiz",
+"Türk alfabesinde kaç harf vardır?|29/yirmi dokuz",
+"Bir yıl kaç mevsimden oluşur?|4/dört",
+"Su donunca hangi hâle gelir?|Buz",
+"Bir düzinede kaç adet vardır?|12/on iki",
+"Yoğurdun sulandırılmasıyla yapılan geleneksel içecek nedir?|Ayran",
+"Türk kahvesi hangi kapta pişirilir?|Cezve",
+"Kapadokya'da sabahları gökyüzünü dolduran şey nedir?|Balon/Sıcak hava balonu",
+"Vücuda kan pompalayan organ hangisidir?|Kalp",
+"Yetişkin bir insanın kaç dişi vardır?|32/otuz iki",
+"Olimpiyat bayrağında kaç halka vardır?|5/beş",
+"Mors alfabesindeki SOS kaç harften oluşur?|3/üç",
+"Nil Nehri hangi kıtadadır?|Afrika",
+"Trafikte kırmızı ışık ne anlama gelir?|Dur/Durmak",
+"Hangi mevsimde ağaçların yaprakları dökülür?|Sonbahar/Güz",
+"Normal bir yıl kaç gündür?|365/üç yüz altmış beş",
+"Yumurtlayan memeli hayvan hangisidir?|Ornitorenk",
+// --- COĞRAFYA (30)
+"Türkiye'nin başkenti neresidir?|Ankara",
+"Türkiye'nin en kalabalık şehri hangisidir?|İstanbul",
+"Türkiye'nin en yüksek dağı hangisidir?|Ağrı/Ağrı Dağı",
+"Türkiye'nin en büyük gölü hangisidir?|Van/Van Gölü",
+"İstanbul'un Avrupa ve Asya yakasını ayıran boğaz hangisidir?|İstanbul Boğazı/Boğaziçi/Boğaz",
+"Pamukkale travertenleri hangi ilimizdedir?|Denizli",
+"Efes Antik Kenti hangi ilimizdedir?|İzmir",
+"Baklavası ve fıstığıyla ünlü ilimiz hangisidir?|Gaziantep",
+"Türkiye'nin en uzun nehri hangisidir?|Kızılırmak",
+"Türkiye'nin çay üretiminde başı çeken ili hangisidir?|Rize",
+"Mevlana Türbesi hangi ilimizdedir?|Konya",
+"Türkiye'nin kaç coğrafi bölgesi vardır?|7/yedi",
+"Peribacalarıyla ünlü bölgemiz hangisidir?|Kapadokya",
+"Fransa'nın başkenti neresidir?|Paris",
+"Japonya'nın başkenti neresidir?|Tokyo",
+"İtalya'nın başkenti neresidir?|Roma",
+"Yüzölçümü bakımından dünyanın en büyük ülkesi hangisidir?|Rusya",
+"Dünyanın en yüksek dağı hangisidir?|Everest",
+"Giza piramitleri hangi ülkededir?|Mısır",
+"Eyfel Kulesi hangi ülkededir?|Fransa",
+"Avustralya'nın başkenti neresidir?|Canberra",
+"Dünyanın en büyük sıcak çölü hangisidir?|Sahra",
+"Amazon Ormanları hangi kıtadadır?|Güney Amerika",
+"Niagara Şelalesi ABD ile hangi ülkenin sınırındadır?|Kanada",
+"Almanya'nın başkenti neresidir?|Berlin",
+"İspanya'nın başkenti neresidir?|Madrid",
+"Sümela Manastırı hangi ilimizdedir?|Trabzon",
+"Gökçeada hangi denizdedir?|Ege/Ege Denizi",
+"Dünyanın en küçük ülkesi hangisidir?|Vatikan",
+"Londra hangi ülkenin başkentidir?|İngiltere/Birleşik Krallık",
+// --- TARİH (30)
+"Türkiye Cumhuriyeti'nin kurucusu kimdir?|Atatürk/Mustafa Kemal",
+"Cumhuriyet hangi yıl ilan edildi?|1923",
+"1453'te İstanbul'u fetheden padişah kimdir?|Fatih/Fatih Sultan Mehmet/Fatih Sultan Mehmed",
+"Osmanlı Devleti'ni kuran bey kimdir?|Osman",
+"Mustafa Kemal 19 Mayıs 1919'da hangi şehre çıktı?|Samsun",
+"Çanakkale Deniz Savaşı hangi yıl yapıldı?|1915",
+"Malazgirt Savaşı hangi yıl yapıldı?|1071",
+"Osmanlı Devleti hangi yıl kuruldu?|1299",
+"Osmanlı'da en uzun süre tahtta kalan padişah kimdir?|Kanuni/Kanuni Sultan Süleyman",
+"Roma İmparatorluğu'nun başkenti neresiydi?|Roma",
+"Halifelik hangi yıl kaldırıldı?|1924",
+"Soyadı Kanunu hangi yıl çıkarıldı?|1934",
+"Türk kadınına seçme ve seçilme hakkı hangi yıl verildi?|1934",
+"Birinci Dünya Savaşı hangi yıl başladı?|1914",
+"İkinci Dünya Savaşı hangi yıl sona erdi?|1945",
+"1492'de Amerika'ya ulaşan denizci kimdir?|Kolomb/Kristof Kolomb",
+"Fransız İhtilali hangi yıl başladı?|1789",
+"Truva Savaşı'nda hangi hayvanın heykeli hile için kullanıldı?|At/Tahta At",
+"Büyük İskender hangi krallığın hükümdarıydı?|Makedonya",
+"Titanik gemisi hangi yıl battı?|1912",
+"Atatürk hangi şehirde doğdu?|Selanik",
+"İstiklal Marşı'nın şairi kimdir?|Mehmet Akif/Mehmet Akif Ersoy/Akif",
+"Büyük Taarruz sonunda İzmir hangi yıl kurtuldu?|1922",
+"Aya ilk ayak basan astronotun soyadı nedir?|Armstrong/Neil Armstrong",
+"Berlin Duvarı hangi yıl yıkıldı?|1989",
+"Piri Reis hangi alandaki çalışmalarıyla ünlüdür?|Harita/Haritacılık",
+"Mimar Sinan'ın ustalık eseri Selimiye Camii hangi ilimizdedir?|Edirne",
+"Sultanahmet'teki altı minareli cami hangisidir?|Sultanahmet Camii/Sultanahmet/Mavi Cami",
+"Osmanlı'da padişahın vekili olan en yüksek devlet adamı kimdir?|Sadrazam/Vezir-i Azam",
+"Türkiye hangi yıl NATO'ya üye oldu?|1952",
+// --- BİLİM (30)
+"Güneş Sistemi'nin en büyük gezegeni hangisidir?|Jüpiter",
+"Güneş'e en yakın gezegen hangisidir?|Merkür",
+"Kızıl Gezegen olarak bilinen gezegen hangisidir?|Mars",
+"Suyun kimyasal formülü nedir?|H2O",
+"Havada en çok bulunan gaz hangisidir?|Azot/Nitrojen",
+"İnsan vücudunun en büyük organı hangisidir?|Deri/Cilt",
+"Yerçekimi yasasını bulan bilim insanı kimdir?|Newton/Isaac Newton",
+"Görelilik kuramını ortaya koyan bilim insanı kimdir?|Einstein/Albert Einstein",
+"Altının kimyasal sembolü nedir?|Au",
+"Periyodik tablonun ilk elementi hangisidir?|Hidrojen",
+"Bitkilerin güneş ışığıyla besin üretmesine ne ad verilir?|Fotosentez",
+"Kanda oksijen taşıyan hücrelere ne denir?|Alyuvar/Eritrosit/Kırmızı kan hücresi",
+"İnsan hücresinde kaç kromozom bulunur?|46/kırk altı",
+"Ses hangi ortamda yayılamaz?|Boşluk/Vakum/Uzay",
+"Dünya kendi ekseni etrafında kaç saatte döner?|24/yirmi dört",
+"Halkalarıyla ünlü gezegen hangisidir?|Satürn",
+"Oda sıcaklığında sıvı olan tek metal hangisidir?|Cıva",
+"Elektrik akımının birimi nedir?|Amper",
+"Elektrik direncinin birimi nedir?|Ohm",
+"Mıknatısın iki ucuna ne ad verilir?|Kutup",
+"Güneş ışığıyla vücutta üretilen vitamin hangisidir?|D vitamini/D",
+"Kemik ve dişlerin sağlamlığı için gerekli mineral hangisidir?|Kalsiyum",
+"Güneş hangi tür yıldızdır?|Sarı cüce/Cüce",
+"Doğadaki en sert maddelerden biri hangisidir?|Elmas",
+"Solunumda kullandığımız yaşamsal gaz hangisidir?|Oksijen",
+"Karbondioksiti kullanıp oksijen üreten canlılar hangileridir?|Bitkiler/Bitki",
+"Bir üçgenin iç açıları toplamı kaç derecedir?|180/yüz seksen",
+"Bir çemberin çevresinin çapına oranı olan sayı nedir?|Pi",
+"Dünyanın en büyük hayvanı hangisidir?|Mavi balina/Balina",
+"Gece gökyüzünde kendi ışığını yayan gök cismi nedir?|Yıldız",
+// --- SPOR (30)
+"Futbol maçı normalde kaç dakikadır?|90/doksan",
+"Basketbolda bir takım sahada kaç oyuncuyla yer alır?|5/beş",
+"Dünya Kupası'nı en çok kazanan ülke hangisidir?|Brezilya",
+"Galatasaray'ın renkleri sarı ve hangisidir?|Kırmızı",
+"Fenerbahçe'nin renkleri sarı ve hangisidir?|Lacivert",
+"Beşiktaş'ın sembolü hangi kuştur?|Kartal",
+"Trabzonspor'un renkleri bordo ve hangisidir?|Mavi",
+"Wimbledon hangi spor dalının turnuvasıdır?|Tenis",
+"Naim Süleymanoğlu hangi spor dalıyla ünlüdür?|Halter",
+"Olimpiyat Oyunları kaç yılda bir yapılır?|4/dört",
+"2022 Dünya Kupası'nı hangi ülke kazandı?|Arjantin",
+"Cristiano Ronaldo hangi ülkenin futbolcusudur?|Portekiz",
+"Hakan Şükür'ün lakabı nedir?|Boğa",
+"Tarihi Kırkpınar Yağlı Güreşleri hangi ilde yapılır?|Edirne",
+"Formula 1 efsanesi Michael Schumacher hangi ülkelidir?|Almanya",
+"Satranç tahtasında kaç kare vardır?|64/altmış dört",
+"Bowlingte tüm lobutları tek atışta devirmeye ne denir?|Strike",
+"Toprak kortta oynanan Fransa'daki tenis turnuvası hangisidir?|Roland Garros",
+"Futbolda topun kaleye girmesine ne denir?|Gol",
+"Futbolda köşe vuruşuna İngilizce ne denir?|Korner/Corner",
+"Olimpiyatlarda birinciye hangi madalya verilir?|Altın",
+"Smaç hangi spor dallarında yapılan bir harekettir?|Basketbol/Voleybol",
+"Standart bir golf sahasında kaç delik vardır?|18/on sekiz",
+"Boksörlerin dövüştüğü alana ne denir?|Ring",
+"Türkiye 2002 Dünya Kupası'nda kaçıncı oldu?|3/üçüncü",
+"Rafael Nadal hangi ülkenin tenisçisidir?|İspanya",
+"Formula 1 aracı kaç tekerleklidir?|4/dört",
+"Kayak hangi mevsimin sporudur?|Kış",
+"Efsane golcü Metin Oktay hangi takımla özdeşleşmiştir?|Galatasaray",
+"Amerika'daki profesyonel basketbol ligi hangisidir?|NBA",
+// --- SİNEMA (30)
+"Recep İvedik filmlerinin başrol oyuncusu kimdir?|Şahan Gökbakar/Şahan",
+"Hababam Sınıfı'nda Şaban karakterini kim canlandırır?|Kemal Sunal/Sunal",
+"Titanik filminde Jack'i canlandıran oyuncu kimdir?|DiCaprio/Leonardo DiCaprio",
+"Yüzüklerin Efendisi'nde yüzüğü taşıyan hobbit kimdir?|Frodo",
+"Harry Potter'ın okuduğu büyücülük okulunun adı nedir?|Hogwarts",
+"Örümcek Adam'ın gerçek adı nedir?|Peter Parker",
+"Batman'in yaşadığı şehir hangisidir?|Gotham",
+"Aslan Kral filmindeki genç aslanın adı nedir?|Simba",
+"Star Wars'ta Luke Skywalker'ın babası kimdir?|Darth Vader/Vader",
+"Avatar filminin yönetmeni kimdir?|James Cameron/Cameron",
+"Inception filminin yönetmeni kimdir?|Christopher Nolan/Nolan",
+"Jurassic Park filminde hangi canlılar vardır?|Dinozor/Dinozorlar",
+"Kayıp Balık Nemo'daki Nemo hangi balık türüdür?|Palyaço balığı",
+"Forrest Gump'ta hayat neye benzetilir: bir kutu ...?|Çikolata",
+"Karlar Ülkesi filmindeki buz büyülü kraliçenin adı nedir?|Elsa",
+"Matrix filminde Neo'yu canlandıran oyuncu kimdir?|Keanu Reeves/Reeves",
+"Shrek filminin yeşil kahramanı ne tür bir yaratıktır?|Ogre/Dev",
+"Toy Story'deki kovboy oyuncağın adı nedir?|Woody",
+"Kurtlar Vadisi'nde Polat Alemdar'ı kim canlandırdı?|Necati Şaşmaz/Şaşmaz",
+"Muhteşem Yüzyıl dizisi hangi padişahın hayatını anlatır?|Kanuni/Süleyman/Kanuni Sultan Süleyman",
+"Gladyatör filminin başrolünde hangi oyuncu vardır?|Russell Crowe/Crowe",
+"Karayip Korsanları'nın kaptanı Jack'in soyadı nedir?|Sparrow",
+"Cars filminin yarış arabası kahramanı kimdir?|Şimşek McQueen/McQueen",
+"Oscar Ödülleri hangi şehirde verilir?|Los Angeles",
+"Minyonlar hangi renktir?|Sarı",
+"Kayıp Balık Nemo'daki unutkan mavi balığın adı nedir?|Dory",
+"Süpermen'in doğduğu gezegen hangisidir?|Kripton",
+"Thor'un çekicinin adı nedir?|Mjölnir/Mjolnir",
+"Iron Man'in gerçek adı Tony kimdir?|Stark",
+"Harry Potter serisinin yazarı kimdir?|J.K. Rowling/Rowling",
+// --- TEKNOLOJİ (30)
+"iPhone hangi şirketin ürünüdür?|Apple",
+"Windows işletim sistemi hangi şirkete aittir?|Microsoft",
+"Google'ın kurucularından biri kimdir?|Larry Page/Sergey Brin/Page/Brin",
+"Android hangi şirkete aittir?|Google",
+"Twitter'ın yeni adı nedir?|X",
+"Bilgisayarda yazı yazmak için kullanılan donanım nedir?|Klavye",
+"Ekrandaki imleci hareket ettiren cihaza ne denir?|Fare/Mouse",
+"Tesla'nın CEO'su kimdir?|Elon Musk/Musk",
+"Facebook'un kurucusu kimdir?|Mark Zuckerberg/Zuckerberg",
+"Bir byte kaç bittir?|8/sekiz",
+"Yapay zekânın İngilizce kısaltması nedir?|AI/YZ",
+"TikTok hangi ülkede kurulan bir şirkete aittir?|Çin",
+"Türkiye'nin yerli elektrikli otomobil markası hangisidir?|Togg",
+"Bayraktar TB2 hangi tür bir araçtır?|SİHA/İHA/İnsansız hava aracı/Dron/Drone",
+"Instagram hangi şirkete aittir?|Meta",
+"Bilgisayarın beyni olarak anılan parça hangisidir?|İşlemci/CPU",
+"Dosyaların kalıcı saklandığı bilgisayar parçası hangisidir?|Disk/Sabit disk/Hard disk/SSD",
+"ChatGPT'yi geliştiren şirket hangisidir?|OpenAI",
+"Claude yapay zekâsını geliştiren şirket hangisidir?|Anthropic",
+"Bitcoin'in yaratıcısının takma adı nedir?|Satoshi Nakamoto/Nakamoto/Satoshi",
+"Python adı hangi hayvandan gelir?|Yılan",
+"İlk web sitesini kuran bilim insanı kimdir?|Tim Berners-Lee/Berners-Lee",
+"Amazon'un kurucusu kimdir?|Jeff Bezos/Bezos",
+"QR kodundaki Q harfi hangi kelimeyi simgeler?|Quick/Hızlı",
+"Bilgisayarda Ctrl + C ne işe yarar?|Kopyalama/Kopyala",
+"Bilgisayarda Ctrl + V ne işe yarar?|Yapıştır/Yapıştırma",
+"Nokia hangi ülkenin telefon markasıdır?|Finlandiya",
+"PlayStation hangi şirkete aittir?|Sony",
+"Super Mario oyunlarını hangi şirket üretir?|Nintendo",
+"Samsung hangi ülkenin markasıdır?|Güney Kore"
 ];
-const $=id=>document.getElementById(id),rob=$('rob');
-const N=s=>String(s).toLocaleLowerCase('tr').replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]/g,'');
-const TIME=45;
-let deck=[],qn=0,cur=null,rev=new Set(),left=TIME,state='idle',snd=true,scores={},lastWinner='',tmo=0;
+var QUESTIONS=RAW.map(function(s,i){var p=s.split("|");return{q:p[0],a:p[1].split("/"),cat:CATS[Math.floor(i/30)]};});
+if(QUESTIONS.length!==210)console.warn("Soru sayısı 210 değil:",QUESTIONS.length);
 
-/* ---- Ses / konuşma ---- */
-function say(t,speak=true){$('say').textContent=t||'\u00a0';if(speak)talk(t)}
-function talk(t){
-  clearTimeout(tmo);
-  if(snd&&'speechSynthesis'in window){
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';u.rate=1.02;
-    const v=speechSynthesis.getVoices().find(v=>(v.lang||'').toLowerCase().startsWith('tr'));if(v)u.voice=v;
-    u.onstart=()=>rob.classList.add('talk');u.onend=u.onerror=()=>rob.classList.remove('talk');
+/* ============ YARDIMCILAR ============ */
+function $(id){return document.getElementById(id)}
+function norm(s){
+  s=String(s).replace(/İ/g,"i").replace(/I/g,"ı").toLocaleLowerCase("tr");
+  s=s.replace(/ı/g,"i").replace(/ş/g,"s").replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ö/g,"o").replace(/ç/g,"c").replace(/[âä]/g,"a").replace(/î/g,"i").replace(/û/g,"u").replace(/i̇/g,"i");
+  return " "+s.replace(/[^a-z0-9]+/g," ").trim()+" ";
+}
+function isCorrect(comment,answers){
+  var c=norm(comment);
+  for(var i=0;i<answers.length;i++){var a=norm(answers[i]);if(a.trim()&&c.indexOf(a)!==-1)return true}
+  return false;
+}
+function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t}return arr}
+
+/* ============ ÖLÇEKLEME ============ */
+var stage=$("stage");
+function fit(){var s=Math.min(innerWidth/1080,innerHeight/1920);stage.style.transform="translate(-50%,-50%) scale("+s+")"}
+addEventListener("resize",fit);fit();
+
+/* ============ ARKA PLAN: 3D IZGARA + PARTİKÜL ============ */
+var bg=$("bg"),bx=bg.getContext("2d"),W=1080,H=1920;
+var parts=[];for(var i=0;i<90;i++)parts.push({x:Math.random()*W,y:Math.random()*H,r:2+Math.random()*5,v:.3+Math.random()*1.1,ph:Math.random()*6.28,c:Math.random()<.5?"255,201,51":"0,229,255"});
+function drawBg(t){
+  var g=bx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#060b19");g.addColorStop(.5,"#120a35");g.addColorStop(1,"#060b19");
+  bx.fillStyle=g;bx.fillRect(0,0,W,H);
+  var hz=H/2,off=(t/1800)%1;
+  bx.lineWidth=2;
+  for(var side=-1;side<=1;side+=2){
+    for(var k=0;k<22;k++){
+      var p=((k+off)/22),y=hz+side*(p*p*hz);
+      bx.strokeStyle="rgba("+(side>0?"0,229,255":"168,85,247")+","+(.06+p*.45)+")";
+      bx.beginPath();bx.moveTo(0,y);bx.lineTo(W,y);bx.stroke();
+    }
+    for(var v=-14;v<=14;v++){
+      bx.strokeStyle="rgba(124,58,237,.38)";
+      bx.beginPath();bx.moveTo(W/2+v*36,hz);bx.lineTo(W/2+v*330,hz+side*hz);bx.stroke();
+    }
+  }
+  var hg=bx.createRadialGradient(W/2,hz,10,W/2,hz,500);hg.addColorStop(0,"rgba(124,58,237,.35)");hg.addColorStop(1,"rgba(124,58,237,0)");
+  bx.fillStyle=hg;bx.fillRect(0,hz-500,W,1000);
+  for(var n=0;n<parts.length;n++){
+    var q=parts[n];q.y-=q.v;q.x+=Math.sin(t/900+q.ph)*.5;
+    if(q.y<-10){q.y=H+10;q.x=Math.random()*W}
+    var a=.35+.35*Math.sin(t/500+q.ph);
+    bx.fillStyle="rgba("+q.c+","+a+")";bx.shadowColor="rgb("+q.c+")";bx.shadowBlur=14;
+    bx.beginPath();bx.arc(q.x,q.y,q.r,0,6.283);bx.fill();
+  }
+  bx.shadowBlur=0;
+}
+
+/* ============ KONFETİ ============ */
+var fx=$("fx"),fc=fx.getContext("2d"),conf=[];
+function burst(){
+  var cols=["#ffc933","#00e5ff","#a855f7","#3dff8f","#ff4d6d","#ffffff"];
+  for(var i=0;i<220;i++){
+    var left=i%2===0;
+    conf.push({x:left?0:W,y:900+Math.random()*300,vx:(left?1:-1)*(8+Math.random()*16),vy:-(14+Math.random()*20),g:.55,w:10+Math.random()*14,h:6+Math.random()*10,r:Math.random()*6,vr:(Math.random()-.5)*.5,c:cols[i%cols.length],life:240});
+  }
+}
+function drawConf(){
+  fc.clearRect(0,0,W,H);
+  for(var i=conf.length-1;i>=0;i--){
+    var p=conf[i];p.vy+=p.g;p.vx*=.992;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;
+    if(p.life<=0||p.y>H+40){conf.splice(i,1);continue}
+    fc.save();fc.translate(p.x,p.y);fc.rotate(p.r);fc.fillStyle=p.c;fc.globalAlpha=Math.min(1,p.life/60);fc.fillRect(-p.w/2,-p.h/2,p.w,p.h);fc.restore();
+  }
+}
+
+/* ============ AVATAR ============ */
+var mouth=$("mouth"),bars=[];
+for(var b=0;b<9;b++){
+  var r=document.createElementNS("http://www.w3.org/2000/svg","rect");
+  r.setAttribute("x",b*17.5);r.setAttribute("width",11);r.setAttribute("rx",5);r.setAttribute("fill","#00e5ff");
+  mouth.appendChild(r);bars.push(r);
+}
+var speaking=false,mood="neutral";
+var MOODS={neutral:"#00e5ff",happy:"#3dff8f",sad:"#ff3b5c"};
+function setMood(m){
+  mood=m;var c=MOODS[m];
+  ["eL","eR","ant","core"].forEach(function(id){$(id).setAttribute("fill",c)});
+  bars.forEach(function(r){r.setAttribute("fill",c)});
+  $("head").setAttribute("stroke",c);
+  var h=$("host");h.classList.remove("happy","sad");void h.getBBox;
+  if(m==="happy")h.classList.add("happy");if(m==="sad")h.classList.add("sad");
+}
+function animMouth(t){
+  for(var i=0;i<bars.length;i++){
+    var amp=(speaking||audioSpeaking)?(10+Math.abs(Math.sin(t/90+i*1.3))*30*(.5+.5*Math.sin(t/140+i))):(mood==="sad"?4:5+Math.sin(t/600+i)*2);
+    var hh=Math.max(4,amp);bars[i].setAttribute("height",hh);bars[i].setAttribute("y",(20-hh/2)+(mood==="sad"?8:0));
+  }
+}
+
+/* ============ SESLENDİRME ============ */
+var voice=null,soundOn=true;
+function pickVoice(){
+  var vs=speechSynthesis.getVoices();if(!vs.length)return;
+  var tr=vs.filter(function(v){return /^tr([-_]|$)/i.test(v.lang)||/turk|türk/i.test(v.name)});
+  voice=tr.filter(function(v){return /ahmet/i.test(v.name)&&/online/i.test(v.name)})[0]
+     ||tr.filter(function(v){return /online|natural/i.test(v.name)})[0]
+     ||tr.filter(function(v){return /ahmet|emel|tolga/i.test(v.name)})[0]
+     ||tr[0]||null;
+  $("tInfo").textContent="Ses: "+(voice?voice.name:"tr-TR bulunamadı (varsayılan)");
+}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+var spkCount=0,audioSpeaking=false,invAudio=null,invIdx=0;
+var INVITES=["./davet1.m4a","./davet2.m4a","./davet3.m4a","./davet4.m4a"];
+function stopInvite(){
+  if(invAudio){var a=invAudio;invAudio=null;a.onended=a.onerror=null;try{a.pause()}catch(e){}}
+  audioSpeaking=false;
+}
+function playInvite(msg,done){
+  stopInvite();
+  if(!soundOn){if(done)done();return}
+  try{if("speechSynthesis" in window)speechSynthesis.cancel()}catch(e){}
+  var a=new Audio(INVITES[invIdx%INVITES.length]);invIdx++;invAudio=a;
+  var finished=false;
+  function fin(ok){
+    if(finished)return;finished=true;
+    if(invAudio===a){invAudio=null;audioSpeaking=false}
+    if(!ok&&invAudio===null&&soundOn)speak(msg,{cancel:true}); // dosya yoksa/çalmazsa yedek: tarayıcı sesi
+    if(done)done();
+  }
+  a.onplaying=function(){audioSpeaking=true};
+  a.onended=function(){fin(true)};
+  a.onerror=function(){fin(false)};
+  var p;try{p=a.play()}catch(e){fin(false);return}
+  if(p&&p.catch)p.catch(function(){fin(false)});
+}
+function speak(text,opt){
+  opt=opt||{};
+  if(!soundOn||!("speechSynthesis" in window))return;
+  try{
+    if(opt.cancel)speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text);
+    u.lang="tr-TR";if(voice)u.voice=voice;
+    u.rate=opt.rate||1.02;u.pitch=opt.pitch||1.05;u.volume=1;
+    u.onstart=function(){spkCount++;speaking=true};
+    u.onend=u.onerror=function(){spkCount=Math.max(0,spkCount-1);if(!spkCount)speaking=false};
     speechSynthesis.speak(u);
-  }else{rob.classList.add('talk');tmo=setTimeout(()=>rob.classList.remove('talk'),Math.min(4000,t.length*70))}
-}
-function mood(m){rob.classList.remove('happy','sad');if(m)rob.classList.add(m)}
-
-/* ---- Soru akışı ---- */
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
-function nextQ(){
-  if(!deck.length)deck=shuffle(Q.map((_,i)=>i));
-  cur=Q[deck.pop()];qn++;rev=new Set();left=TIME;state='run';mood('');
-  $('qno').textContent='SORU '+qn+' · '+cur[1].length+' HARFLİ';$('qtxt').textContent=cur[0];
-  const b=$('boxes');b.innerHTML='';b.style.setProperty('--n',cur[1].length);
-  [...cur[1]].forEach(()=>{const d=document.createElement('div');d.className='box';d.style.setProperty('--n',cur[1].length);d.textContent='?';b.appendChild(d)});
-  [...b.children].forEach((d,i)=>d.dataset.i=i);
-  drawTimer();say(cur[0]);
-}
-function boxEl(i){return $('boxes').children[i]}
-function hint(){
-  const hid=[...cur[1]].map((_,i)=>i).filter(i=>!rev.has(i));
-  if(hid.length<2)return;
-  const i=hid[Math.random()*hid.length|0];rev.add(i);
-  const d=boxEl(i);d.textContent=cur[1][i];d.classList.add('on','hint');
-  say('İpucu! '+(i+1)+'. harf: '+cur[1][i]);
-}
-function drawTimer(){
-  $('tnum').textContent=Math.max(0,left);
-  const r=$('ring');r.style.strokeDashoffset=163.4*(1-Math.max(0,left)/TIME);
-  const c=left<=10?'#ff2f45':left<=25?'#ffd76a':'#19f0ff';r.style.stroke=c;$('tnum').style.color=left<=10?'#ff8a95':'#fff';
-}
-setInterval(()=>{
-  if(state!=='run')return;
-  left--;drawTimer();
-  if(left===25||left===10)hint();
-  if(left<=0)timeout();
-},1000);
-
-function timeout(){
-  state='wait';mood('sad');
-  [...cur[1]].forEach((ch,i)=>{const d=boxEl(i);d.textContent=ch;d.classList.add('on','red')});
-  say('Süre doldu! Doğru cevap '+cur[1].toLocaleLowerCase('tr')+' idi.');
-  setTimeout(nextQ,6000);
-}
-function win(user){
-  state='wait';mood('happy');
-  [...cur[1]].forEach((ch,i)=>{const d=boxEl(i);d.textContent=ch;d.classList.remove('hint','red');d.classList.add('on','gold');d.style.animationDelay=i*70+'ms'});
-  scores[user]=(scores[user]||0)+10;lastWinner=user;board();
-  $('wu').textContent=user.toLocaleUpperCase('tr');$('wa').textContent=cur[1];$('win').classList.add('show');
-  boom();
-  const ans=cur[1].toLocaleLowerCase('tr');
-  say('Tebrikler '+user+', doğru cevap '+ans+'!');
-  setTimeout(()=>$('win').classList.remove('show'),5200);
-  setTimeout(nextQ,6500);
-}
-function comment(user,text){
-  if(state!=='run'||!cur)return;
-  if(N(text)&&N(text)===N(cur[1]))win(String(user).trim()||'Misafir');
+  }catch(e){}
 }
 
-/* ---- Liderlik tablosu ---- */
-function board(){
-  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,5),med=['🥇','🥈','🥉','4','5'];
-  $('rows').innerHTML=[0,1,2,3,4].map(i=>top[i]
-    ?`<div class="row${top[i][0]===lastWinner?' up':''}"><i>${med[i]}</i><s>${esc(top[i][0])}</s><em>${top[i][1]} P</em></div>`
-    :`<div class="row empty"><i>${med[i]}</i><s>—</s><em>0 P</em></div>`).join('');
-}
-function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+/* ============ OYUN DURUMU ============ */
+var TOTAL=45,HINT1=25,HINT2=12;
+var deck=[],lastIdx=-1,qCount=0,cur=null,phase="idle",tStart=0,answered=false;
+var hintMask=[],hintOrder=[],hint1Done=false,hint2Done=false,nextTimer=null,lowerTimer=null;
+var scores={};try{scores=JSON.parse(localStorage.getItem("qf_scores")||"{}")}catch(e){scores={}}
 
-/* ---- Konfeti ---- */
-const cv=$('fx'),cx=cv.getContext('2d');let P=[],raf=0;
-function boom(){
-  cv.width=cv.clientWidth;cv.height=cv.clientHeight;
-  const cols=['#ffd76a','#19f0ff','#8a4dff','#2dff7a','#ff4fa3','#fff'];
-  for(let k=0;k<170;k++){const l=k%2;P.push({x:l?cv.width:0,y:cv.height*.55,vx:(l?-1:1)*(4+Math.random()*9),vy:-(8+Math.random()*13),s:6+Math.random()*8,r:Math.random()*6,vr:Math.random()*.4-.2,c:cols[k%6],life:140+Math.random()*60})}
-  if(!raf)loop();
+function nextQuestion(){
+  if(!deck.length){
+    deck=shuffle(QUESTIONS.map(function(_,i){return i}));
+    if(deck[deck.length-1]===lastIdx&&deck.length>1){var t=deck[0];deck[0]=deck[deck.length-1];deck[deck.length-1]=t}
+  }
+  var idx=deck.pop();lastIdx=idx;return QUESTIONS[idx];
 }
-function loop(){
-  cx.clearRect(0,0,cv.width,cv.height);
-  P=P.filter(p=>p.life-->0&&p.y<cv.height+30);
-  P.forEach(p=>{p.vy+=.32;p.vx*=.992;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});
-  raf=P.length?requestAnimationFrame(loop):0;
+function renderHint(){
+  var ans=cur.a[0].toLocaleUpperCase("tr"),out="";
+  for(var i=0;i<ans.length;i++){
+    var ch=ans[i];
+    if(ch===" ")out+="  ";else out+=(hintMask[i]?ch:"_")+" ";
+  }
+  $("hint").textContent=out.trim();
+  $("hint").style.fontSize=(out.length>22?48:out.length>14?60:74)+"px";
+}
+function revealLetter(){
+  if(!cur)return;
+  for(var i=0;i<hintOrder.length;i++){if(!hintMask[hintOrder[i]]){hintMask[hintOrder[i]]=true;break}}
+  renderHint();
+}
+function startQuestion(){
+  clearTimeout(nextTimer);
+  $("winner").classList.remove("show");$("timeup").classList.remove("show");
+  cur=nextQuestion();qCount++;answered=false;phase="ask";tStart=performance.now();
+  hint1Done=hint2Done=false;setMood("neutral");
+  var ans=cur.a[0];hintMask=[];hintOrder=[];
+  for(var i=0;i<ans.length;i++){hintMask.push(false);if(ans[i]!==" ")hintOrder.push(i)}
+  shuffle(hintOrder);
+  $("cat").textContent=cur.cat+"  •  #"+qCount;
+  $("qbox").textContent=cur.q;
+  $("qbox").style.fontSize=(cur.q.length>70?50:58)+"px";
+  renderHint();
+  stopInvite();
+  var invite=(qCount%3===0);
+  if(invite){var qq=cur;showInvite(function(){if(cur===qq&&phase==="ask")speak(qq.q)})}
+  else speak(cur.q,{cancel:true});
+}
+function showInvite(done){
+  var msg="Yayına yeni katılan arkadaşlar hepiniz hoş geldiniz, cevabı yoruma yazın adınızı okuyalım!";
+  $("lowertxt").textContent="📢 "+msg;
+  $("lower").classList.add("show");
+  clearTimeout(lowerTimer);lowerTimer=setTimeout(function(){$("lower").classList.remove("show")},9000);
+  playInvite(msg,done);
+}
+function onCorrect(name,uid){
+  answered=true;phase="result";stopInvite();
+  var key=uid||name;
+  if(!scores[key])scores[key]={name:name,pts:0};
+  scores[key].name=name;scores[key].pts+=10;
+  try{localStorage.setItem("qf_scores",JSON.stringify(scores))}catch(e){}
+  renderBoard();
+  var ans=cur.a[0];
+  hintMask=hintMask.map(function(){return true});renderHint();
+  setMood("happy");
+  $("wn").textContent=name;$("wa").textContent="Cevap: "+ans;
+  $("wn").style.fontSize=(name.length>14?64:100)+"px";
+  $("winner").classList.remove("show");void $("winner").offsetWidth;$("winner").classList.add("show");
+  burst();
+  speak("Harikasın "+name+", doğru cevap "+ans+"!",{cancel:true,rate:.98,pitch:1.15});
+  nextTimer=setTimeout(startQuestion,6000);
+}
+function onTimeUp(){
+  answered=true;phase="result";stopInvite();
+  hintMask=hintMask.map(function(){return true});renderHint();
+  setMood("sad");
+  $("ta").textContent="Doğru cevap: "+cur.a[0];
+  $("timeup").classList.add("show");
+  speak("Süre doldu! Doğru cevap "+cur.a[0]+".",{cancel:true,pitch:.95});
+  nextTimer=setTimeout(startQuestion,5000);
+}
+function renderBoard(){
+  var list=Object.keys(scores).map(function(k){return scores[k]}).sort(function(a,b){return b.pts-a.pts}).slice(0,5);
+  var box=$("rows");
+  if(!list.length){box.innerHTML='<div class="empty">İlk doğru cevabı sen ver, tabloya gir!</div>';return}
+  box.innerHTML="";
+  list.forEach(function(p,i){
+    var d=document.createElement("div");d.className="row"+(i===0?" first":"");
+    var medals=["🥇","🥈","🥉"];
+    var rk=document.createElement("span");rk.className="rk";rk.textContent=medals[i]||(i+1)+".";
+    var nm=document.createElement("span");nm.className="nm";nm.textContent=p.name;
+    var pt=document.createElement("span");pt.className="pt";pt.textContent=p.pts+" P";
+    d.appendChild(rk);d.appendChild(nm);d.appendChild(pt);box.appendChild(d);
+  });
+}
+function handleComment(name,uid,text){
+  if(phase!=="ask"||answered||!cur||!text)return;
+  if(isCorrect(text,cur.a))onCorrect(name||"Yarışmacı",uid);
 }
 
-/* ---- TikFinity WebSocket ---- */
-function wsState(ok){$('dot').classList.toggle('ok',ok);$('ws').textContent='TikFinity: '+(ok?'bağlı':'bağlı değil')}
+/* ============ ANA DÖNGÜ ============ */
+var CIRC=553;
+function frame(t){
+  drawBg(t);drawConf();animMouth(t);
+  if(phase==="ask"){
+    var el=(performance.now()-tStart)/1000,rem=Math.max(0,TOTAL-el);
+    var shown=Math.ceil(rem);
+    $("tnum").textContent=shown;
+    $("ring").setAttribute("stroke-dashoffset",(CIRC*(1-rem/TOTAL)).toFixed(1));
+    var col=rem<=10?"#ff4d6d":rem<=20?"#ffc933":"#00e5ff";
+    $("ring").setAttribute("stroke",col);$("tnum").style.color=rem<=10?"#ff9aae":"#fff";
+    if(!hint1Done&&rem<=HINT1){hint1Done=true;revealLetter()}
+    if(!hint2Done&&rem<=HINT2){hint2Done=true;revealLetter()}
+    if(rem<=0&&!answered)onTimeUp();
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ============ TIKFINITY WEBSOCKET ============ */
+var ws=null;
+function setWs(on){var e=$("ws");e.className=on?"on":"off";e.textContent=on?"● TikFinity BAĞLI":"● TikFinity bekleniyor"}
 function connect(){
-  let ws;try{ws=new WebSocket('ws://localhost:21213/')}catch(e){return setTimeout(connect,5000)}
-  ws.onopen=()=>wsState(true);
-  ws.onclose=()=>{wsState(false);setTimeout(connect,5000)};
-  ws.onerror=()=>{try{ws.close()}catch(e){}};
-  ws.onmessage=e=>{try{
-    const m=JSON.parse(e.data);
-    if(m.event==='chat'){const d=m.data||{};comment(d.nickname||d.uniqueId||'Misafir',d.comment||'')}
-  }catch(_){}};
+  try{ws=new WebSocket("ws://localhost:21213/")}catch(e){setWs(false);setTimeout(connect,3000);return}
+  ws.onopen=function(){setWs(true)};
+  ws.onclose=function(){setWs(false);setTimeout(connect,3000)};
+  ws.onerror=function(){try{ws.close()}catch(e){}};
+  ws.onmessage=function(m){
+    try{
+      var j=JSON.parse(m.data),ev=j.event||j.type||"",d=j.data||j;
+      if(ev&&ev!=="chat"&&ev!=="comment")return;
+      var text=d.comment||d.message||d.text;
+      if(!text)return;
+      handleComment(d.nickname||d.uniqueId||d.username||"Yarışmacı",d.uniqueId||d.userId||d.nickname,text);
+    }catch(e){}
+  };
 }
 
-/* ---- Test paneli ---- */
-function sendTest(){const u=$('tu').value.trim()||'Test',c=$('tc').value;$('tc').value='';comment(u,c)}
-$('tc').addEventListener('keydown',e=>{if(e.key==='Enter')sendTest()});
-$('snd').onclick=()=>{snd=!snd;$('snd').textContent=snd?'🔊 Ses: Açık':'🔇 Ses: Kapalı';if(!snd&&'speechSynthesis'in window)speechSynthesis.cancel()};
-addEventListener('keydown',e=>{if((e.key==='h'||e.key==='H')&&!/INPUT|TEXTAREA/.test(e.target.tagName))$('chip').classList.toggle('open')});
-if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=()=>{};
+/* ============ TEST PANELİ (H) ============ */
+addEventListener("keydown",function(e){
+  if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==="h"||e.key==="H"||e.code==="KeyH"){var t=$("test"),open=t.style.display!=="block";t.style.display=open?"block":"none"}
+});
+function sendTest(){
+  var n=$("tName").value.trim()||"Test",m=$("tMsg").value;
+  handleComment(n,"test_"+n,m);$("tMsg").value="";
+}
+$("tSend").onclick=sendTest;
+$("tMsg").addEventListener("keydown",function(e){if(e.key==="Enter")sendTest()});
+$("tSnd").onclick=function(){
+  soundOn=!soundOn;this.textContent=soundOn?"🔊 Ses: Açık":"🔇 Ses: Kapalı";
+  if(!soundOn){stopInvite();if("speechSynthesis" in window)speechSynthesis.cancel()}
+};
+$("tSkip").onclick=function(){if(phase==="ask"&&!answered)onTimeUp()};
 
-/* ---- Başlat ---- */
-$('go').onclick=()=>{$('start').remove();board();connect();say('Merhaba! Ben Quantflux. Cevabı yorumlara yazın!');setTimeout(nextQ,3500)};
-board();drawTimer();
+/* ============ OTOMATİK BAŞLAT ============ */
+renderBoard();setMood("neutral");connect();
+requestAnimationFrame(frame);
+startQuestion();
+})();
 </script>
 </body>
 </html>
