@@ -74,7 +74,7 @@
     var vidId = extractVideoId(document.getElementById('vidUrlIn').value.trim());
     document.getElementById('tck').textContent = '🔄 Bağlanıyor: ' + vidId;
     try {
-      var vRes = await fetch('https://googleapis.com' + vidId + '&key=' + key);
+      var vRes = await fetch('https://corsproxy.io' + vidId + '&key=' + key);
       var vData = await vRes.json();
       if (vData.error) { document.getElementById('tck').textContent = '❌ Google API Hatası: ' + vData.error.message; return; }
       var item = vData.items ? vData.items.slice(0, 1).shift() : null;
@@ -84,7 +84,7 @@
       if (ytPoll) clearInterval(ytPoll);
       ytPoll = setInterval(async function() {
         try {
-          var cRes = await fetch('https://googleapis.com' + chatId + '&part=snippet,authorDetails&key=' + key);
+          var cRes = await fetch('https://corsproxy.io' + chatId + '&part=snippet,authorDetails&key=' + key);
           var cData = await cRes.json();
           if (cData.items) { cData.items.forEach(function(m) { if (!seenMsgIds.has(m.id)) { seenMsgIds.add(m.id); runCmd(m.authorDetails.displayName, m.snippet.displayMessage); } }); }
         } catch (err) {}
