@@ -34,7 +34,7 @@
 <div class="bus-box"><div class="speed" id="spd">80 KM/S</div><svg viewBox="0 0 300 160" width="350"><rect x="40" y="120" width="40" height="30" rx="8" fill="#000"/><rect x="220" y="120" width="40" height="30" rx="8" fill="#000"/><rect x="75" y="8" width="150" height="22" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/><text x="150" y="23" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">ULUS - KIZILAY EKSPRES</text><rect x="35" y="28" width="230" height="102" rx="20" fill="#0284c7" stroke="#7dd3fc" stroke-width="3"/><rect x="48" y="38" width="204" height="40" rx="8" fill="#0f172a" stroke="#bae6fd" stroke-width="2"/><rect x="95" y="90" width="110" height="22" rx="6" fill="#0f172a"/><circle cx="48" cy="100" r="12" fill="#fef08a"/><circle cx="252" cy="100" r="12" fill="#fef08a"/><rect x="110" y="116" width="80" height="14" rx="3" fill="#fff"/><text x="150" y="127" fill="#000" font-size="10" font-weight="bold" text-anchor="middle">06 QFX 3D</text></svg></div>
 <div class="ticker" id="tck">Arka kapı açık! Yorumlara "bin", "bas" veya "müsait" yaz!</div>
 <div class="lb"><div class="lb-title">🏆 HAFTANIN EN HIZLI DOLMUŞ AĞALARI (TOP 5)</div><div id="lbList"><div style="text-align:center;font-size:22px;color:#9ca3af;">Yolcular bekleniyor...</div></div></div>
-<div class="panel" id="pnl"><input type="text" id="uIn" value="Sertan"><input type="text" id="mIn" value="bin"><button onclick="doTest()">Test</button><input type="text" id="apiKeyIn" value="AIzaSyDZ6cPqEbkcUYTG3gmR1n0V-kuOy0lfFX0" style="width:140px;"><input type="text" id="vidUrlIn" placeholder="YT Yayın Linkini Yapıştır" style="width:220px;"><button style="background:#dc2626;" onclick="connectYT()">YT Bağla</button><button style="background:#4b5563;" onclick="hidePnl()">Gizle (H)</button></div>
+<div class="panel" id="pnl"><input type="text" id="uIn" value="Sertan"><input type="text" id="mIn" value="bin"><button onclick="doTest()">Test</button><input type="text" id="apiKeyIn" value="AIzaSyDZ6cPqEbkcUYTG3gmR1n0V-kuOy0lfFX0" style="width:140px;"><input type="text" id="vidUrlIn" value="q7uIXh6zAJk" style="width:160px;"><button style="background:#dc2626;" onclick="connectYT()">YT Bağla</button><button style="background:#4b5563;" onclick="hidePnl()">Gizle (H)</button></div>
 <script>
   setInterval(function() { document.getElementById('clk').textContent = new Date().toLocaleTimeString('tr-TR'); }, 1000);
   var scores = new Map();
@@ -72,14 +72,14 @@
   async function connectYT() {
     var key = document.getElementById('apiKeyIn').value.trim();
     var vidId = extractVideoId(document.getElementById('vidUrlIn').value.trim());
-    if (!key || !vidId) { document.getElementById('tck').textContent = '⚠️ Lütfen YT Yayın Linkini yapıştırın!'; return; }
-    document.getElementById('tck').textContent = '🔄 YouTube sohbet odasına bağlanılıyor...';
+    document.getElementById('tck').textContent = '🔄 Bağlanıyor: ' + vidId;
     try {
       var vRes = await fetch('https://googleapis.com' + vidId + '&key=' + key);
       var vData = await vRes.json();
+      if (vData.error) { document.getElementById('tck').textContent = '❌ Google API Hatası: ' + vData.error.message; return; }
       var item = vData.items ? vData.items.slice(0, 1).shift() : null;
       var chatId = (item && item.liveStreamingDetails) ? item.liveStreamingDetails.activeLiveChatId : '';
-      if (!chatId) { document.getElementById('tck').textContent = '❌ Aktif canlı sohbet bulunamadı!'; return; }
+      if (!chatId) { document.getElementById('tck').textContent = '❌ Sohbet ID boş döndü (Yayın gizli veya bitmiş olabilir).'; return; }
       document.getElementById('tck').textContent = '✅ YOUTUBE CANLI SOHBET BAĞLANDI!';
       if (ytPoll) clearInterval(ytPoll);
       ytPoll = setInterval(async function() {
@@ -89,7 +89,7 @@
           if (cData.items) { cData.items.forEach(function(m) { if (!seenMsgIds.has(m.id)) { seenMsgIds.add(m.id); runCmd(m.authorDetails.displayName, m.snippet.displayMessage); } }); }
         } catch (err) {}
       }, 3500);
-    } catch (e) { document.getElementById('tck').textContent = '❌ API bağlantı hatası!'; }
+    } catch (e) { document.getElementById('tck').textContent = '❌ Ağ Hatası: ' + e.message; }
   }
   try { var ws = new WebSocket('ws://localhost:21213/'); ws.onmessage = function(e) { var d = JSON.parse(e.data); if (d.event === 'chat' && d.data) runCmd(d.data.nickname || 'Yolcu', d.data.comment || ''); }; } catch (e) {}
   setTimeout(function() { runCmd('Şoför Mahmut', 'bin'); }, 300);
