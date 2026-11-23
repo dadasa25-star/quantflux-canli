@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Mavi Dolmus</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  body { background: #070b14; color: #fff; width: 1080px; height: 1920px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
+  .live-bar { display: flex; justify-content: space-between; background: #000; border: 2px solid #38bdf8; border-radius: 16px; padding: 14px 20px; font-size: 26px; font-weight: bold; }
+  .header { text-align: center; background: #0c4a6e; border: 3px solid #38bdf8; border-radius: 22px; padding: 18px; }
+  .title { font-size: 46px; font-weight: 900; }
+  .sub { font-size: 22px; color: #bae6fd; margin-top: 6px; }
+  .cmds { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cmd { background: #0f172a; border: 2px solid #0284c7; border-radius: 14px; padding: 14px; font-size: 24px; text-align: center; font-weight: bold; }
+  .cmd.red { border-color: #ef4444; background: #450a0a; color: #fecaca; }
+  .pax-area { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 110px; align-items: center; }
+  .pax { background: #0284c7; border: 3px solid #fff; border-radius: 30px; padding: 8px 18px; font-size: 24px; font-weight: bold; }
+  .bus-box { text-align: center; padding: 18px; background: linear-gradient(180deg, #0f172a, #1e293b); border-radius: 28px; border: 3px solid #38bdf8; position: relative; }
+  .speed { position: absolute; top: 16px; right: 20px; background: #ef4444; padding: 8px 18px; border-radius: 16px; font-size: 26px; font-weight: 900; }
+  .ticker { background: #000; border-left: 8px solid #38bdf8; padding: 16px; border-radius: 14px; font-size: 26px; font-weight: bold; text-align: center; }
+  .lb { background: #0f172a; border: 3px solid #38bdf8; border-radius: 20px; padding: 16px; }
+  .lb-title { font-size: 28px; font-weight: 900; color: #38bdf8; text-align: center; margin-bottom: 10px; }
+  .lb-row { display: flex; justify-content: space-between; font-size: 25px; padding: 6px 0; border-bottom: 1px solid #334155; }
+  .panel { background: #000; border: 3px solid #4ade80; border-radius: 18px; padding: 12px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .panel input { background: #1f2937; border: 1px solid #6b7280; color: #fff; padding: 9px; border-radius: 8px; font-size: 18px; width: 140px; }
+  .panel button { background: #16a34a; color: #fff; border: none; padding: 9px 14px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="live-bar"><span style="color:#f87171;">● CANLI YAYIN</span><span id="lastW" style="color:#38bdf8;">Son: Bekleniyor</span><span id="clk" style="color:#facc15;">00:00:00</span></div>
+<div class="header"><div class="title">🚐 MAVİ DOLMUŞ: İNECEK VAR! 🚐</div><div class="sub">QUANTFLUX 3D • YORUMA YAZ DOLMUŞA BİN!</div></div>
+<div class="cmds"><div class="cmd">💬 "bin" → Koltuk Kap (+10P)</div><div class="cmd">🔥 "bas" → Gaza Bas (+15P)</div><div class="cmd">🛑 "müsait" → İnecek Var (+25P)</div><div class="cmd red">🚨 "radar" → Lideri Yakalat!</div></div>
+<div class="pax-area" id="paxArea"></div>
+<div class="bus-box"><div class="speed" id="spd">80 KM/S</div><svg viewBox="0 0 300 160" width="350"><rect x="40" y="120" width="40" height="30" rx="8" fill="#000"/><rect x="220" y="120" width="40" height="30" rx="8" fill="#000"/><rect x="75" y="8" width="150" height="22" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/><text x="150" y="23" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">ULUS - KIZILAY EKSPRES</text><rect x="35" y="28" width="230" height="102" rx="20" fill="#0284c7" stroke="#7dd3fc" stroke-width="3"/><rect x="48" y="38" width="204" height="40" rx="8" fill="#0f172a" stroke="#bae6fd" stroke-width="2"/><rect x="95" y="90" width="110" height="22" rx="6" fill="#0f172a"/><circle cx="48" cy="100" r="12" fill="#fef08a"/><circle cx="252" cy="100" r="12" fill="#fef08a"/><rect x="110" y="116" width="80" height="14" rx="3" fill="#fff"/><text x="150" y="127" fill="#000" font-size="10" font-weight="bold" text-anchor="middle">06 QFX 3D</text></svg></div>
+<div class="ticker" id="tck">Arka kapı açık! Yorumlara "bin", "bas" veya "müsait" yaz!</div>
+<div class="lb"><div class="lb-title">🏆 HAFTANIN EN HIZLI DOLMUŞ AĞALARI (TOP 5)</div><div id="lbList"><div style="text-align:center;font-size:22px;color:#9ca3af;">Yolcular bekleniyor...</div></div></div>
+<div class="panel" id="pnl"><input type="text" id="uIn" value="Sertan"><input type="text" id="mIn" value="bin"><button onclick="doTest()">Test</button><input type="text" id="apiKeyIn" value="AIzaSyDZ6cPqEbkcUYTG3gmR1n0V-kuOy0lfFX0" style="width:140px;"><input type="text" id="vidUrlIn" placeholder="YT Yayın Linkini Yapıştır" style="width:220px;"><button style="background:#dc2626;" onclick="connectYT()">YT Bağla</button><button style="background:#4b5563;" onclick="hidePnl()">Gizle (H)</button></div>
+<script>
+  setInterval(function() { document.getElementById('clk').textContent = new Date().toLocaleTimeString('tr-TR'); }, 1000);
+  var scores = new Map();
+  var seenMsgIds = new Set();
+  var speed = 80;
+  function render() {
+    document.getElementById('spd').textContent = speed + ' KM/S';
+    var names = Array.from(scores.keys());
+    document.getElementById('paxArea').innerHTML = names.slice(-8).map(function(n) { return '<div class="pax">🚐 ' + n + '</div>'; }).join('');
+    var sorted = names.sort(function(a, b) { return scores.get(b) - scores.get(a); }).slice(0, 5);
+    if (sorted.length > 0) {
+      document.getElementById('lbList').innerHTML = sorted.map(function(n, i) { return '<div class="lb-row"><span>' + (i + 1) + '. ' + n + '</span><span style="color:#4ade80;">' + scores.get(n) + ' Puan</span></div>'; }).join('');
+    }
+  }
+  function runCmd(user, txt) {
+    var t = txt.toLowerCase();
+    document.getElementById('lastW').textContent = 'Son: ' + user;
+    var cur = scores.get(user) || 0;
+    if (t.indexOf('bin') !== -1) { scores.set(user, cur + 10); speed = 95; document.getElementById('tck').textContent = '🚐 ' + user + ' dolmuşa bindi! (+10 Puan)'; }
+    else if (t.indexOf('bas') !== -1) { scores.set(user, cur + 15); speed = 145; document.getElementById('tck').textContent = '🔥 ' + user + ' gaza bastı! (+15 Puan)'; }
+    else if (t.indexOf('sait') !== -1 || t.indexOf('inecek') !== -1) { scores.set(user, cur + 25); speed = 60; document.getElementById('tck').textContent = '🛑 ' + user + ' müsait yerde indi! (+25 Puan)'; }
+    else if (t.indexOf('radar') !== -1) { speed = 40; document.getElementById('tck').textContent = '🚓 ' + user + ' radar ihbarı yaptı! Dolmuş yavaşladı!'; }
+    render();
+  }
+  function doTest() { runCmd(document.getElementById('uIn').value || 'Sertan', document.getElementById('mIn').value || 'bin'); }
+  function hidePnl() { var p = document.getElementById('pnl'); p.style.display = (p.style.display === 'none') ? 'flex' : 'none'; }
+  document.addEventListener('keydown', function(e) { if (e.key.toLowerCase() === 'h') hidePnl(); });
+  var ytPoll = null;
+  function extractVideoId(input) {
+    if (input.indexOf('v=') !== -1) return input.split('v=').slice(1).join('').split('&').slice(0, 1).join('');
+    if (input.indexOf('youtu.be/') !== -1) return input.split('youtu.be/').slice(1).join('').split('?').slice(0, 1).join('');
+    if (input.indexOf('/live/') !== -1) return input.split('/live/').slice(1).join('').split('?').slice(0, 1).join('');
+    return input.trim();
+  }
+  async function connectYT() {
+    var key = document.getElementById('apiKeyIn').value.trim();
+    var vidId = extractVideoId(document.getElementById('vidUrlIn').value.trim());
+    if (!key || !vidId) { document.getElementById('tck').textContent = '⚠️ Lütfen YT Yayın Linkini yapıştırın!'; return; }
+    document.getElementById('tck').textContent = '🔄 YouTube sohbet odasına bağlanılıyor...';
+    try {
+      var vRes = await fetch('https://googleapis.com' + vidId + '&key=' + key);
+      var vData = await vRes.json();
+      var item = vData.items ? vData.items.slice(0, 1).shift() : null;
+      var chatId = (item && item.liveStreamingDetails) ? item.liveStreamingDetails.activeLiveChatId : '';
+      if (!chatId) { document.getElementById('tck').textContent = '❌ Aktif canlı sohbet bulunamadı!'; return; }
+      document.getElementById('tck').textContent = '✅ YOUTUBE CANLI SOHBET BAĞLANDI!';
+      if (ytPoll) clearInterval(ytPoll);
+      ytPoll = setInterval(async function() {
+        try {
+          var cRes = await fetch('https://googleapis.com' + chatId + '&part=snippet,authorDetails&key=' + key);
+          var cData = await cRes.json();
+          if (cData.items) { cData.items.forEach(function(m) { if (!seenMsgIds.has(m.id)) { seenMsgIds.add(m.id); runCmd(m.authorDetails.displayName, m.snippet.displayMessage); } }); }
+        } catch (err) {}
+      }, 3500);
+    } catch (e) { document.getElementById('tck').textContent = '❌ API bağlantı hatası!'; }
+  }
+  try { var ws = new WebSocket('ws://localhost:21213/'); ws.onmessage = function(e) { var d = JSON.parse(e.data); if (d.event === 'chat' && d.data) runCmd(d.data.nickname || 'Yolcu', d.data.comment || ''); }; } catch (e) {}
+  setTimeout(function() { runCmd('Şoför Mahmut', 'bin'); }, 300);
+</script>
+</body>
+</html>
